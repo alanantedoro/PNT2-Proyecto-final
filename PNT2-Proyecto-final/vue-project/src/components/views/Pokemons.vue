@@ -11,7 +11,6 @@ export default {
         const pokemons = await fetch('https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0');                 
         this.pokemons = await pokemons.json();
         this.pokemonsParse = this.pokemons.results
-        return pokemonsParse;
         }
     
 };
@@ -24,8 +23,7 @@ export default {
         <div class="card" style="width: 8rem;">
             <div class="card-body">
             <h5 class="card-title">{{ item.name}}</h5>
-<!-- hacer un *to para el hipervinculo pasandole el id del parametro url del json pokemons -->
-            <a href="#" class="btn btn-primary">Info</a>
+            <router-link :to="'/pokemon/' + item.url.split(`/`)[6]" class="btn btn-primary">Info</router-link>
             </div>
         </div>
     </div>
