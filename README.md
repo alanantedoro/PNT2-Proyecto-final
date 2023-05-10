@@ -14,7 +14,7 @@ Cada una con sus correspondientes atributos y métodos.
 
 A nivel diseño, para las pantallas se usarán los colores característicos de este universo: Blanco, Azul y Rojo. Con un estilo minimalista y retro.
 
-Vistas:
+Las vistas que tendra el proyecto serán:
 - Home
 - Log In / Sign Up
 - Perfil
