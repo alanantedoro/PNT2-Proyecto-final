@@ -13,3 +13,10 @@ Cada una con sus correspondientes atributos y métodos.
 
 A nivel diseño, para las pantallas se usarán los colores característicos de este universo: Blanco, Azul y Rojo. Con un estilo minimalista y retro.
 
+Vistas:
+- index
+- log in / log out
+- perfil
+- pokedex
+- pantalla pelea
+- historial
