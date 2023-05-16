@@ -22,9 +22,11 @@ Las clases y sus atributos dentro del modelo serán:
 El combate se dará de la siguiente manera:
 - El primero que ataca es el que más speed tiene.
 - Del Pokémon se obtendrán los primeros tres ataques con power > 0.
-- A partir del cálculo para el daño se calcula el poder de cada ataque, esto se quita de la vida del contrincante.
+- A partir del cálculo para el daño se calcula el poder de cada ataque, esto se quita de la vida del contrincante. (https://bulbapedia.bulbagarden.net/wiki/Damage)
 - Los turnos de ataque se van intercalando uno a uno.
 - El usuario puede elegir entre los ataques el que más le convenga.
+- La accuracy del ataque definirá si ocurre o no el mismo.
+- Se podrán bloquear ataques si se usan más de una cantidad de veces determinada para cada uno.
 
 A nivel diseño, para las pantallas se usarán los colores característicos de este universo: Blanco, Azul y Rojo. Con un estilo minimalista y retro.
 
