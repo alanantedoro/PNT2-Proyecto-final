@@ -32,7 +32,7 @@
                 </div>
 
                 <div class="text-center pt-1 mb-5 pb-1">
-                  <button class="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3" type="button" @click="login()">Log in</button>
+                  <button class="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3" type="button" @click="loginVue()">Log in</button>
                   <a class="text-muted" href="#!">Forgot password?</a>
                 </div>
 
@@ -63,6 +63,16 @@
 </template>
 
 <script>
+import usuariosStore from "../../stores/Users.js";
+// import { login } from "../../stores/Users.js";
+
+export default {
+  methods: {
+    loginVue() {
+      usuariosStore.login();
+    }
+  }
+}
 
 
 

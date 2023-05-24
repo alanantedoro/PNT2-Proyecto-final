@@ -21,7 +21,7 @@ export const usuariosStore = defineStore('usuarios',
                               return response.json().then((data) => {
                               console.log(data);
                               if (data.length == 0)
-                                this.mensaje = 'El usuario no se encontro';
+                                this.mensaje = 'El usuario no se encontró';
                               else
                                 this.mensaje = data[0].id;
                               return data;
@@ -34,7 +34,6 @@ export const usuariosStore = defineStore('usuarios',
   
             
             logout(){
-                this.cantidad++;
             },
             buscar()
             {
