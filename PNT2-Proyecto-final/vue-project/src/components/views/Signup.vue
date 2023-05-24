@@ -8,8 +8,9 @@
             <input type="text" id="username" name="username"><br><br>
             <label for="password">Contraseña:</label>
             <input type="password" id="password" name="password"><br><br>
-            <input type="submit" value="Iniciar sesión">
+            <input type="submit" value="Crear usuario">
         </form>
+        <RouterLink to="/login">Iniciar sesión</RouterLink>
     </div>
 </template>
 <style scoped>

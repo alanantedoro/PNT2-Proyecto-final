@@ -29,6 +29,8 @@ El combate se dará de la siguiente manera:
 - Se podrán bloquear ataques si se usan más de una cantidad de veces determinada para cada uno.
 
 A nivel diseño, para las pantallas se usarán los colores característicos de este universo: Blanco, Azul y Rojo. Con un estilo minimalista y retro.
+Paletas de colores:
+- https://pokepalettes.com/#pikachu
 
 Las vistas que tendra el proyecto serán:
 - Home
