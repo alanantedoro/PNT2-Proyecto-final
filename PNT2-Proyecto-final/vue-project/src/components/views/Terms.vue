@@ -2,6 +2,7 @@
 
 </script>
 <template>
+    <div class="contenedora">
     <h1>Terms and Conditions</h1>
     
     <h3>Important Legal Information</h3>
@@ -52,6 +53,10 @@
 
         <p>Any personal information provided to UnovaRPG will not be sold or given out.</p>
     </h6>
+    </div>
 </template>
 <style scoped>
+.contenedora{
+    text-align: justify;
+}
 </style>
