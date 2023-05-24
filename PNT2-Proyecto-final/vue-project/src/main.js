@@ -11,6 +11,7 @@ import Pokemons from './components/views/Pokemons.vue'
 import Pokemon from './components/views/Pokemon.vue'
 import Login from './components/views/login.vue'
 import Signup from './components/views/signup.vue'
+import Terms from './components/views/Terms.vue'
 
 
 
@@ -20,6 +21,7 @@ const routes = [
     { path : '/Pokemon/:id' , component : Pokemon},
     { path : '/login' , component : Login}, 
     { path : '/signup' , component : Signup}, 
+    { path : '/Terms' , component : Terms}, 
 ]
 
 const router = createRouter(

@@ -63,13 +63,14 @@
 </template>
 
 <script>
-import usuariosStore from "../../stores/Users.js";
+import { usuariosStore } from "../../stores/Users.js";
 // import { login } from "../../stores/Users.js";
 
 export default {
   methods: {
     loginVue() {
-      usuariosStore.login();
+      const userStore = usuariosStore();
+      userStore.login(); // Llamada al método "login" de usuariosStore
     }
   }
 }

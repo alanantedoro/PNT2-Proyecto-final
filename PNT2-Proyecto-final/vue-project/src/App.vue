@@ -8,7 +8,7 @@ import { RouterLink, RouterView } from 'vue-router'
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <RouterLink to="/" class="link-navbar">Home</RouterLink>
+          <RouterLink to="/" class="link-navbar">Index</RouterLink>
         </li>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -29,6 +29,14 @@ import { RouterLink, RouterView } from 'vue-router'
   </div>
 </nav>
   <RouterView></RouterView>
+  <footer class="footer">
+      <div class="container">
+        <p>
+          Este es el footer de la página. Aquí puedes agregar cualquier contenido adicional que desees.
+          <RouterLink to="/terms" class="link-footer">Términos y condiciones</RouterLink>
+        </p>
+      </div>
+    </footer>
 </template>
 
 <style scoped>
@@ -54,4 +62,7 @@ import { RouterLink, RouterView } from 'vue-router'
     justify-content: flex-end !important;
   }
 
+  .footer {
+    background-color: #2a27fa;
+  }
 </style>
