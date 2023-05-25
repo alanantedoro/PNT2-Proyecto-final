@@ -1,16 +1,15 @@
 <script setup>
 import { RouterLink, RouterView } from "vue-router";
-import { onMounted } from "vue";
-import { ref } from "vue";
+import { onMounted, provide, ref } from "vue";
 import { usuariosStore } from "../src/stores/Users.js";
+
 const userStore = usuariosStore();
+const userObject = ref(null);
 
 function logout() {
 	userStore.logout();
 	userObject.value = null;
 }
-
-const userObject = ref(null);
 
 onMounted(() => {
 	const storedUserObject = window.sessionStorage.getItem("userObject");
@@ -18,6 +17,8 @@ onMounted(() => {
 		userObject.value = JSON.parse(storedUserObject);
 	}
 });
+
+provide("userObject", userObject);
 </script>
 
 <template>

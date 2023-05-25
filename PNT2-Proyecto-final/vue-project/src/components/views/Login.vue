@@ -15,9 +15,6 @@
 										/>
 										<h4 class="mt-1 mb-5 pb-1">Login de turnera</h4>
 									</div>
-									<div class="text-center">
-										{{ this.mensaje }}
-									</div>
 
 									<form>
 										<p>Please login to your account</p>
@@ -90,15 +87,25 @@
 
 <script>
 import { usuariosStore } from "../../stores/Users.js";
-
-const userObject = JSON.parse(sessionStorage.getItem("userObject"));
-const mensaje = "Ingrese sus datos";
+import { useRouter } from "vue-router";
 
 export default {
 	data() {
 		return {
 			username: "",
 			password: "",
+		};
+	},
+	setup() {
+		const router = useRouter();
+
+		const redirectToAnotherView = () => {
+			// Redirigir a otra vista
+			router.push("/");
+		};
+
+		return {
+			redirectToAnotherView,
 		};
 	},
 	methods: {
@@ -109,13 +116,12 @@ export default {
 
 			try {
 				const data = await userStore.login(); // Llamada al método "login" de usuariosStore
-				console.log(data);
-				if (data.length === 0) {
-					this.mensaje = "El usuario no se encontró";
-				} else {
-					this.mensaje = data[0].id;
+				if (data.length > 0) {
 					// Guardar el objeto en la Session Storage
 					sessionStorage.setItem("userObject", JSON.stringify(data[0]));
+					this.redirectToAnotherView();
+				} else {
+					alert("El usuario no se encontró");
 				}
 			} catch (error) {
 				console.error(error);

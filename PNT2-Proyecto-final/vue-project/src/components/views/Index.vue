@@ -1,19 +1,24 @@
 <script>
-import { onMounted } from "vue";
+import { inject, onMounted } from "vue";
+
 export default {
-	data() {
+	setup() {
+		const userObject = inject("userObject");
+
+		onMounted(() => {
+			const storedUserObject = window.sessionStorage.getItem("userObject");
+			if (storedUserObject) {
+				userObject.value = JSON.parse(storedUserObject);
+			}
+		});
+
 		return {
-			userObject: null,
+			userObject,
 		};
-	},
-	mounted() {
-		const storedUserObject = window.sessionStorage.getItem("userObject");
-		if (storedUserObject) {
-			this.userObject = JSON.parse(storedUserObject);
-		}
 	},
 };
 </script>
+
 <template>
 	<div>
 		<h2>Welcome to Index Page</h2>
