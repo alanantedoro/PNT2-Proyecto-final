@@ -46,7 +46,7 @@ provide("userObject", userObject);
 				</ul>
 				<ul class="navbar-nav nav-items-right">
 					<li class="nav-item" v-if="userObject">
-						<RouterLink to="/login" class="link-navbar">{{
+						<RouterLink to="/Profile" class="link-navbar">{{
 							userObject.username
 						}}</RouterLink>
 					</li>
