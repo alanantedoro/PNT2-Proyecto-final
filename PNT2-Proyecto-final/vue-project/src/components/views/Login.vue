@@ -15,7 +15,7 @@
 										/>
 										<h4 class="mt-1 mb-5 pb-1">Login de turnera</h4>
 									</div>
-
+									<h6>{{ this.mensaje }}</h6>
 									<form>
 										<p>Please login to your account</p>
 
@@ -94,6 +94,7 @@ export default {
 		return {
 			username: "",
 			password: "",
+			mensaje: "",
 		};
 	},
 	setup() {
@@ -121,7 +122,7 @@ export default {
 					sessionStorage.setItem("userObject", JSON.stringify(data[0]));
 					this.redirectToAnotherView();
 				} else {
-					alert("El usuario no se encontró");
+					this.mensaje = "El usuario no se encontró";
 				}
 			} catch (error) {
 				console.error(error);
