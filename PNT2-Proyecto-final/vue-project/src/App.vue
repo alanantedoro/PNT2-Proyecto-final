@@ -7,7 +7,7 @@ const userStore = usuariosStore();
 
 function logout() {
 	userStore.logout();
-	userObject = null;
+	userObject.value = null;
 }
 
 const userObject = ref(null);
