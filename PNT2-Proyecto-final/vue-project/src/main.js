@@ -1,6 +1,7 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 import { createRouter, createWebHistory } from "vue-router";
+import VueLazyload from "vue-lazyload";
 
 import "./assets/main.css";
 
@@ -30,4 +31,4 @@ const router = createRouter({
 });
 const pinia = createPinia();
 
-createApp(App).use(pinia).use(router).mount("#app");
+createApp(App).use(pinia).use(router).use(VueLazyload).mount("#app");

@@ -17,7 +17,7 @@ export default {
 		<div class="pokemon-card">
 			<div class="title">
 				<h1>
-					{{ pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1) }}
+					{{ pokemon.name?.charAt(0).toUpperCase() + pokemon.name?.slice(1) }}
 				</h1>
 			</div>
 			<img

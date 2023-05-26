@@ -10,6 +10,7 @@
   "dependencies": {
     "pinia": "^2.0.35",
     "vue": "^3.2.47",
+    "vue-lazyload": "^3.0.0",
     "vue-router": "^4.1.6"
   },
   "devDependencies": {
