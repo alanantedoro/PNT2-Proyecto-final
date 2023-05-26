@@ -14,31 +14,34 @@ export default {
 </script>
 <template>
 	<div class="back">
-		<div class="pokemon-card">
-			<div class="title">
-				<h1>
-					{{ pokemon.name?.charAt(0).toUpperCase() + pokemon.name?.slice(1) }}
-				</h1>
-			</div>
-			<img
-				:src="pokemon.sprites?.front_default"
-				alt="Pokemon Image"
-				class="image"
-			/>
-			<div class="types-container">
-				<div
-					v-for="(type, index) in pokemon.types"
-					:key="index"
-					:class="['type', type.type.name]"
-				>
-					<p>{{ type.type.name }}</p>
+		<div class="container">
+			<div class="pokemon-card">
+				<br />
+				<div class="title">
+					<h1>
+						{{ pokemon.name?.charAt(0).toUpperCase() + pokemon.name?.slice(1) }}
+					</h1>
 				</div>
-			</div>
-			<div class="stats">
-				<p>Height: {{ pokemon.height }}</p>
-				<p>Weight: {{ pokemon.weight }}</p>
-				<div v-for="(stat, index) in pokemon.stats" :key="index">
-					<p>{{ stat.stat.name }}: {{ stat.base_stat }}</p>
+				<img
+					:src="pokemon.sprites?.front_default"
+					alt="Pokemon Image"
+					class="image"
+				/>
+				<div class="types-container">
+					<div
+						v-for="(type, index) in pokemon.types"
+						:key="index"
+						:class="['type', type.type.name]"
+					>
+						<p>{{ type.type.name }}</p>
+					</div>
+				</div>
+				<div class="stats">
+					<p>Height: {{ pokemon.height }}</p>
+					<p>Weight: {{ pokemon.weight }}</p>
+					<div v-for="(stat, index) in pokemon.stats" :key="index">
+						<p>{{ stat.stat.name }}: {{ stat.base_stat }}</p>
+					</div>
 				</div>
 				<br />
 			</div>
@@ -46,9 +49,22 @@ export default {
 	</div>
 </template>
 <style scoped>
+.back {
+	display: flex;
+	justify-content: center; /* Centra horizontalmente en la pantalla */
+	align-items: center; /* Centra verticalmente en la pantalla */
+}
+
+.container {
+	display: flex;
+	justify-content: center; /* Centra horizontalmente */
+}
+
 .pokemon-card {
 	width: 15rem;
-	background-color: #58c8e0;
+	background-color: whitesmoke;
+	border-radius: 2rem;
+	text-align: center;
 }
 
 .title {
@@ -62,10 +78,14 @@ export default {
 .stats {
 	margin-top: 15px;
 	color: black;
+	text-align: left !important;
+	padding-left: 1rem;
 }
 
 .types-container {
 	display: flex;
+	justify-content: center; /* Centra horizontalmente */
+	color: white;
 }
 
 .type {

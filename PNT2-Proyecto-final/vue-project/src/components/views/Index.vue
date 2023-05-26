@@ -20,7 +20,7 @@ export default {
 </script>
 
 <template>
-	<div>
+	<div class="back">
 		<h2>Welcome to Index Page</h2>
 		<div v-if="userObject">
 			<p>Username: {{ userObject.username }}</p>

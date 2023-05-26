@@ -119,5 +119,6 @@ export default {
 
 .back {
 	background-color: #99c0e1;
+	min-height: 88vh;
 }
 </style>
