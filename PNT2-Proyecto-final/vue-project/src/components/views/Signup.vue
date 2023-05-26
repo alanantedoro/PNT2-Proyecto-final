@@ -1,17 +1,116 @@
-<script setup>
+<script>
+import { usuariosStore } from "../../stores/Users.js";
+import { useRouter } from "vue-router";
 
+export default {
+	data() {
+		return {
+			username: "",
+			password: "",
+			mensaje: "",
+		};
+	},
+	setup() {
+		const router = useRouter();
+
+		const redirectToAnotherView = () => {
+			// Redirigir a otra vista
+			router.push("/");
+		};
+
+		return {
+			redirectToAnotherView,
+		};
+	},
+	methods: {
+		async loginVue() {
+			const userStore = usuariosStore();
+			userStore.username = this.username;
+			userStore.password = this.password;
+
+			try {
+				const data = await userStore.login(); // Llamada al método "login" de usuariosStore
+				if (data.length > 0) {
+					// Guardar el objeto en la Session Storage
+					sessionStorage.setItem("userObject", JSON.stringify(data[0]));
+					this.redirectToAnotherView();
+				} else {
+					this.mensaje = "El usuario no se encontró";
+				}
+			} catch (error) {
+				console.error(error);
+			}
+		},
+	},
+};
 </script>
 <template>
-    <div>
-        <form action="/signup" method="POST">
-            <label for="username">Nombre de usuario:</label>
-            <input type="text" id="username" name="username"><br><br>
-            <label for="password">Contraseña:</label>
-            <input type="password" id="password" name="password"><br><br>
-            <input type="submit" value="Crear usuario">
-        </form>
-        <RouterLink to="/login">Iniciar sesión</RouterLink>
-    </div>
+	<section class="h-100 gradient-form" style="background-color: #eee">
+		<div class="container-fluid h-100">
+			<div class="row h-100 justify-content-center align-items-center">
+				<div class="col-lg-6">
+					<div class="card rounded-3 text-black form-log-im">
+						<div class="card-body p-md-5 mx-md-4">
+							<div class="text-center">
+								<img
+									src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/lotus.webp"
+									style="width: 185px"
+									alt="logo"
+								/>
+								<h4 class="mt-1 mb-5 pb-1">Create an account</h4>
+							</div>
+							<form>
+								<div class="form-outline mb-4">
+									<input
+										type="email"
+										id="form2Example11"
+										class="form-control"
+										v-model="username"
+										placeholder="Phone number or email address"
+									/>
+									<label class="form-label" for="form2Example11"
+										>Username</label
+									>
+								</div>
+
+								<div class="form-outline mb-4">
+									<input
+										type="password"
+										id="form2Example22"
+										class="form-control"
+										v-model="password"
+									/>
+									<label class="form-label" for="form2Example22"
+										>Password</label
+									>
+								</div>
+
+								<div class="text-center pt-1 mb-5 pb-1">
+									<!-- ACA ESTE BOTON LLAMA A LA FUNCION LOGIN
+                                    HAY QUE CREAR LA FUNCION SIGNUP -->
+									<button
+										class="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3"
+										type="button"
+										@click="loginVue()"
+									>
+										Sign up
+									</button>
+								</div>
+
+								<div
+									class="d-flex align-items-center justify-content-center pb-4"
+								>
+									<p class="mb-0 me-2">Already have an account?</p>
+									<router-link :to="'/Login'" class="btn btn-outline-danger"
+										>Log in</router-link
+									>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
 </template>
-<style scoped>
-</style>
+<style scoped></style>

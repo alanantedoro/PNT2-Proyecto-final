@@ -3,7 +3,7 @@
 		<div class="container-fluid h-100">
 			<div class="row h-100 justify-content-center align-items-center">
 				<div class="col-lg-6">
-					<div class="card rounded-3 text-black">
+					<div class="card rounded-3 text-black form-log-im">
 						<div class="card-body p-md-5 mx-md-4">
 							<div class="text-center">
 								<img
@@ -115,7 +115,7 @@ export default {
 };
 </script>
 <style>
-.card {
+.form-log-im {
 	margin-top: 15px;
 	margin-bottom: 15px;
 }

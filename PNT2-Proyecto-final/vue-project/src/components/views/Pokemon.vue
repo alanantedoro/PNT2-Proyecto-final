@@ -15,7 +15,7 @@ export default {
 <template>
 	<div>
 		<h1>{{ pokemon.name }}</h1>
-		<img :src="pokemon.sprites.front_default" alt="Pokemon Image" />
+		<img :src="pokemon.sprites?.front_default" alt="Pokemon Image" />
 		<div class="types-container">
 			<div
 				v-for="(type, index) in pokemon.types"
@@ -71,6 +71,10 @@ export default {
 .ground {
 	background-color: #e9d6a4;
 	color: black;
+}
+
+.rock {
+	background-color: #b8a058;
 }
 
 .bug {
