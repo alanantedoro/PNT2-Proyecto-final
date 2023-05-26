@@ -151,7 +151,7 @@ export default {
 }
 
 .electric {
-	background-color: #78c850;
+	background-color: #caf62c;
 	color: black;
 }
 
