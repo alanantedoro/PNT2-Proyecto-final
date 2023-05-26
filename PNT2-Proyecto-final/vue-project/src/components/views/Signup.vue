@@ -52,11 +52,7 @@ export default {
 					<div class="card rounded-3 text-black form-log-im">
 						<div class="card-body p-md-5 mx-md-4">
 							<div class="text-center">
-								<img
-									src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/lotus.webp"
-									style="width: 185px"
-									alt="logo"
-								/>
+								<img src="../images/pokemon-signup.png" alt="logo" />
 								<h4 class="mt-1 mb-5 pb-1">Create an account</h4>
 							</div>
 							<form>
