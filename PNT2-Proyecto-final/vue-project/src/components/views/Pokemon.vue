@@ -13,30 +13,55 @@ export default {
 };
 </script>
 <template>
-	<div>
-		<h1>{{ pokemon.name }}</h1>
-		<img :src="pokemon.sprites?.front_default" alt="Pokemon Image" />
-		<div class="types-container">
-			<div
-				v-for="(type, index) in pokemon.types"
-				:key="index"
-				:class="['type', type.type.name]"
-			>
-				<p>{{ type.type.name }}</p>
+	<div class="back">
+		<div class="pokemon-card">
+			<div class="title">
+				<h1>
+					{{ pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1) }}
+				</h1>
 			</div>
-		</div>
-		<div class="stats">
-			<p>Height: {{ pokemon.height }}</p>
-			<p>Weight: {{ pokemon.weight }}</p>
-			<div v-for="(stat, index) in pokemon.stats" :key="index">
-				<p>{{ stat.stat.name }}: {{ stat.base_stat }}</p>
+			<img
+				:src="pokemon.sprites?.front_default"
+				alt="Pokemon Image"
+				class="image"
+			/>
+			<div class="types-container">
+				<div
+					v-for="(type, index) in pokemon.types"
+					:key="index"
+					:class="['type', type.type.name]"
+				>
+					<p>{{ type.type.name }}</p>
+				</div>
+			</div>
+			<div class="stats">
+				<p>Height: {{ pokemon.height }}</p>
+				<p>Weight: {{ pokemon.weight }}</p>
+				<div v-for="(stat, index) in pokemon.stats" :key="index">
+					<p>{{ stat.stat.name }}: {{ stat.base_stat }}</p>
+				</div>
+				<br />
 			</div>
 		</div>
 	</div>
 </template>
 <style scoped>
+.pokemon-card {
+	width: 15rem;
+	background-color: #58c8e0;
+}
+
+.title {
+	color: black;
+}
+
+.image {
+	height: auto;
+	width: auto;
+}
 .stats {
 	margin-top: 15px;
+	color: black;
 }
 
 .types-container {

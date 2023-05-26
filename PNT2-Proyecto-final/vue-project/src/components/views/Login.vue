@@ -1,9 +1,9 @@
 <template>
-	<section class="h-100 gradient-form" style="background-color: #99c0e1">
+	<section class="h-100 gradient-form back">
 		<div class="container-fluid h-100">
 			<div class="row h-100 justify-content-center align-items-center">
 				<div class="col-lg-6">
-					<div class="card rounded-3 text-black form-log-im">
+					<div class="card rounded-3 text-black form-log-in">
 						<div class="card-body p-md-5 mx-md-4">
 							<div class="text-center">
 								<img src="../images/pokemon-signup.png" alt="logo" />
@@ -112,8 +112,12 @@ export default {
 };
 </script>
 <style>
-.form-log-im {
+.form-log-in {
 	margin-top: 15px;
 	margin-bottom: 15px;
+}
+
+.back {
+	background-color: #99c0e1;
 }
 </style>
