@@ -1,35 +1,45 @@
 <script setup></script>
 <template>
-	<div class="contenedora">
-		<h1>Terms and Conditions</h1>
+	<div style="background-color: #99c0e1">
+		<div class="contenedora-terms">
+			<div class="column-terms">
+				<h1>Terms and Conditions</h1>
 
-		<h3>Important Legal Information</h3>
-		<br />
-		<h6>
-			<p>
-				We are in no way affiliated with Nintendo, The Pokémon Company,
-				Creatures Inc. or Game Freak . No copyright or trademark infringement is
-				intended. Pokémon, all Pokémon names, and related names used are
-				copyright: Gamefreak, Nintendo of America, Nintendo of Japan, Creatures
-				and it's respective owners.
-			</p>
+				<h3>Important Legal Information</h3>
+				<br />
+				<h6>
+					<p>
+						We are in no way affiliated with Nintendo, The Pokémon Company,
+						Creatures Inc. or Game Freak . No copyright or trademark
+						infringement is intended. Pokémon, all Pokémon names, and related
+						names used are copyright: Gamefreak, Nintendo of America, Nintendo
+						of Japan, Creatures and it's respective owners.
+					</p>
 
-			<p>
-				We do not accept donations and we don't sell items or special features.
-				Registration and navigation is completely free. This is only a fan-site.
-			</p>
+					<p>
+						We do not accept donations and we don't sell items or special
+						features. Registration and navigation is completely free. This is
+						only a fan-site.
+					</p>
 
-			<p>
-				We encourage you to buy the Pokemon Video Games. They should be easily
-				available at your country's Amazon or Ebay if not at any local stores.
-			</p>
+					<p>
+						We encourage you to buy the Pokemon Video Games. They should be
+						easily available at your country's Amazon or Ebay if not at any
+						local stores.
+					</p>
 
-			<p>Legal information about the project.</p>
+					<p>Legal information about the project.</p>
 
-			<p>Terms and Conditions</p>
+					<p style="font-weight: bold">Terms and Conditions</p>
 
-			<p>Limit of Liability</p>
-
+					<p>Limit of Liability</p>
+				</h6>
+			</div>
+			<div class="column-img-terms">
+				<img src="../images/pokemon-terms.png" />
+			</div>
+		</div>
+		<div class="column-terms">
 			<p>
 				User agrees that the use of the UnovaRPG's services is entirely at
 				User's own risk. UnovaRPG's services are provided on an "as is" basis
@@ -76,12 +86,27 @@
 				Any personal information provided to UnovaRPG will not be sold or given
 				out.
 			</p>
-		</h6>
+			<br />
+		</div>
 	</div>
 </template>
 <style scoped>
-.contenedora {
+.contenedora-terms {
+	display: flex;
+}
+
+.column-terms {
 	text-align: justify;
-	width: 60%;
+	margin-left: 15px;
+	color: black;
+	margin-bottom: -10px;
+	flex: 60%;
+	margin-right: 15px;
+}
+
+.column-img-terms {
+	flex: 20%;
+	text-align: center;
+	margin-top: 6rem;
 }
 </style>

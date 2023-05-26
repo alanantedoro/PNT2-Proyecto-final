@@ -45,7 +45,7 @@ export default {
 };
 </script>
 <template>
-	<section class="h-100 gradient-form" style="background-color: #eee">
+	<section class="h-100 gradient-form" style="background-color: #99c0e1">
 		<div class="container-fluid h-100">
 			<div class="row h-100 justify-content-center align-items-center">
 				<div class="col-lg-6">
