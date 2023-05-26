@@ -3,7 +3,7 @@ export default {
 	data() {
 		return {
 			pokemons: [],
-			placeholderImage: "../../public/favicon.png",
+			placeholderImage: "/favicon.png",
 		};
 	},
 	created: async function () {
@@ -64,9 +64,22 @@ export default {
 .pokemon-card {
 	text-align: center;
 	width: 10rem;
-	margin-top: 6px;
-	margin-left: 3px;
-	margin-right: 3px;
+	margin-top: 10px;
+	margin-left: 4px;
+	margin-right: 4px;
+	border-radius: 2rem;
+}
+
+.pokemon-card:hover {
+	transform: scale(1.05);
+}
+
+.btn-primary:hover {
+	background-color: aqua;
+}
+
+.btn-primary {
+	border-style: hidden;
 }
 
 .title {

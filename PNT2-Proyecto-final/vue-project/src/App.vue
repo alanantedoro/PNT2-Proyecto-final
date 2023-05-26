@@ -68,13 +68,11 @@ provide("userObject", userObject);
 	<RouterView></RouterView>
 	<footer class="footer">
 		<div class="container">
-			<p>
-				Este es el footer de la página. Aquí puedes agregar cualquier contenido
-				adicional que desees.
-				<RouterLink to="/terms" class="link-footer"
-					>Términos y condiciones</RouterLink
-				>
-			</p>
+			Este es el footer de la página. Aquí puedes agregar cualquier contenido
+			adicional que desees.
+			<RouterLink to="/terms" class="link-footer"
+				>Términos y condiciones</RouterLink
+			>
 		</div>
 	</footer>
 </template>
