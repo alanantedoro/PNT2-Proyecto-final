@@ -75,7 +75,6 @@ export default {
 .text-container {
 	margin-left: 15px;
 	max-width: 20rem;
-	height: 8rem;
 	display: flex !important;
 	justify-content: center !important; /* Centra horizontalmente en la pantalla */
 	align-items: center; /* Centra verticalmente en la pantalla */
