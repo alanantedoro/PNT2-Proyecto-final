@@ -26,7 +26,7 @@ provide("userObject", userObject);
 		<div class="container-fluid">
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-					<li class="nav-item">
+					<li class="nav-item custom-font">
 						<RouterLink to="/" class="link-navbar">Index</RouterLink>
 					</li>
 					<button
@@ -78,6 +78,14 @@ provide("userObject", userObject);
 </template>
 
 <style scoped>
+@font-face {
+	font-family: "MonomaniacOneRegular";
+	src: url("~@/fonts/MonomaniacOne-Regular.ttf");
+}
+
+.custom-font {
+	font-family: "MonomaniacOneRegular", sans-serif;
+}
 .nav-item {
 	padding: 10px;
 }

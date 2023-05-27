@@ -85,6 +85,7 @@ export default {
 .title {
 	color: black;
 	margin-left: 10px;
+	font-family: "MonomaniacOneRegular", sans-serif;
 }
 .card-group {
 	display: flex;

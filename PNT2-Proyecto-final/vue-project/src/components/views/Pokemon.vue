@@ -3,12 +3,28 @@ export default {
 	data() {
 		return {
 			pokemon: {},
+			text: "",
 		};
 	},
 	created: async function () {
 		const id = this.$route.params.id;
 		const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
 		this.pokemon = await response.json();
+		const response2 = await fetch(
+			`https://pokeapi.co/api/v2/pokemon-species/${id}`
+		);
+		const specie = await response2.json();
+		// Filtrar los textos de especie en inglés
+		const englishTexts = specie.flavor_text_entries.filter(
+			(entry) => entry.language.name === "en"
+		);
+
+		// Obtener el primer texto en inglés
+		if (englishTexts.length > 0) {
+			this.text = englishTexts[0].flavor_text;
+		} else {
+			this.text = "No English description available.";
+		}
 	},
 };
 </script>
@@ -45,10 +61,33 @@ export default {
 				</div>
 				<br />
 			</div>
+			<div>
+				<div :class="['text-container', pokemon.types[0].type.name]">
+					<div class="text">
+						{{ this.text }}
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
 <style scoped>
+.text-container {
+	margin-left: 15px;
+	max-width: 20rem;
+	height: 8rem;
+	display: flex !important;
+	justify-content: center !important; /* Centra horizontalmente en la pantalla */
+	align-items: center; /* Centra verticalmente en la pantalla */
+	border-radius: 15px;
+	border: #332e30;
+	border-style: double;
+}
+
+.text {
+	text-align: center !important;
+}
+
 .back {
 	display: flex;
 	justify-content: center; /* Centra horizontalmente en la pantalla */
@@ -58,6 +97,7 @@ export default {
 .container {
 	display: flex;
 	justify-content: center; /* Centra horizontalmente */
+	align-items: center;
 }
 
 .pokemon-card {

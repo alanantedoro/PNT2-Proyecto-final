@@ -15,6 +15,20 @@ import Signup from "./components/views/signup.vue";
 import Terms from "./components/views/Terms.vue";
 import Profile from "./components/views/Profile.vue";
 
+import MonomaniacOneRegular from "@/fonts/MonomaniacOne-Regular.ttf";
+
+// Agrega esta línea para definir la fuente
+const fontStyles = document.createElement("style");
+fontStyles.textContent = `
+  @font-face {
+    font-family: 'MonomaniacOneRegular';
+    src: url(${MonomaniacOneRegular}) format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+`;
+document.head.appendChild(fontStyles);
+
 const routes = [
 	{ path: "/", component: Index },
 	{ path: "/Pokemons", component: Pokemons },
