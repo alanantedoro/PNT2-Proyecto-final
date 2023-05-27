@@ -97,6 +97,7 @@ export default {
 	display: flex;
 	justify-content: center; /* Centra horizontalmente */
 	align-items: center;
+	color: white;
 }
 
 .pokemon-card {
@@ -124,7 +125,6 @@ export default {
 .types-container {
 	display: flex;
 	justify-content: center; /* Centra horizontalmente */
-	color: white;
 }
 
 .type {
