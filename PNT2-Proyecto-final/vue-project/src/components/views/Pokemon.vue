@@ -21,7 +21,11 @@ export default {
 
 		// Obtener el primer texto en inglés
 		if (englishTexts.length > 0) {
-			this.text = englishTexts[0].flavor_text;
+			// Generar un índice aleatorio dentro del rango de los textos disponibles
+			const randomIndex = Math.floor(Math.random() * englishTexts.length);
+
+			// Obtener el texto aleatorio en inglés
+			this.text = englishTexts[randomIndex].flavor_text;
 		} else {
 			this.text = "No English description available.";
 		}
@@ -85,6 +89,7 @@ export default {
 
 .text {
 	text-align: center !important;
+	padding: 15px;
 }
 
 .back {
