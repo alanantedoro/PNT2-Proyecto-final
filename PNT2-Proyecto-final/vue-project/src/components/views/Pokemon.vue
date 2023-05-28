@@ -39,6 +39,7 @@ export default {
 				<br />
 				<div class="title">
 					<h1>
+						#{{ pokemon.id }} <br />
 						{{ pokemon.name?.charAt(0).toUpperCase() + pokemon.name?.slice(1) }}
 					</h1>
 				</div>
@@ -66,7 +67,7 @@ export default {
 				<br />
 			</div>
 			<div>
-				<div :class="['text-container', pokemon.types[0].type.name]">
+				<div :class="['text-container', pokemon.types?.[0]?.type?.name]">
 					<div class="text">
 						{{ this.text }}
 					</div>
@@ -76,6 +77,10 @@ export default {
 	</div>
 </template>
 <style scoped>
+.title {
+	text-shadow: #000000 1px 0 2px;
+}
+
 .text-container {
 	margin-left: 15px;
 	max-width: 20rem;

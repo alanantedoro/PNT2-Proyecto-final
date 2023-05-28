@@ -72,6 +72,8 @@ export default {
 
 .pokemon-card:hover {
 	transform: scale(1.05);
+	text-shadow: rgb(0, 0, 0) 1px 0 8px;
+	box-shadow: rgb(0, 0, 0) 1px 0 8px;
 }
 
 .btn-primary:hover {
