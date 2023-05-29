@@ -58,13 +58,12 @@ export default {
 					</div>
 				</div>
 				<div class="stats">
-					<p>Height: {{ pokemon.height }}</p>
-					<p>Weight: {{ pokemon.weight }}</p>
+					<div class="stat">Height: {{ pokemon.height / 10 }}m</div>
+					<div class="stat">Weight: {{ pokemon.weight / 10 }}kg</div>
 					<div v-for="(stat, index) in pokemon.stats" :key="index">
-						<p>{{ stat.stat.name }}: {{ stat.base_stat }}</p>
+						<div class="stat">{{ stat.stat.name }}: {{ stat.base_stat }}</div>
 					</div>
 				</div>
-				<br />
 			</div>
 			<div>
 				<div :class="['text-container', pokemon.types?.[0]?.type?.name]">
@@ -130,8 +129,12 @@ export default {
 	color: black;
 	text-align: left !important;
 	padding-left: 1rem;
+	padding-bottom: 10px;
 }
 
+.stat {
+	margin-bottom: 5px;
+}
 .types-container {
 	display: flex;
 	justify-content: center; /* Centra horizontalmente */

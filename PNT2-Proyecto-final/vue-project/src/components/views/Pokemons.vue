@@ -41,20 +41,19 @@ export default {
 		<div class="card-group">
 			<div v-for="(item, index) in pokemons">
 				<div class="card pokemon-card">
-					<div class="card-body">
-						<h6 class="card-title">#{{ item.id }}</h6>
-						<h5 class="card-title">{{ item.name }}</h5>
-						<img
-							:src="item.image"
-							class="card-img-top"
-							alt="Pokemon Image"
-							loading="lazy"
-							@error="handleImageError"
-						/>
-						<router-link :to="'/pokemon/' + item.id" class="btn btn-primary"
-							>Info</router-link
-						>
-					</div>
+					<router-link :to="'/pokemon/' + item.id">
+						<div class="card-body">
+							<h6 class="card-title">#{{ item.id }}</h6>
+							<h5 class="card-title">{{ item.name }}</h5>
+							<img
+								:src="item.image"
+								class="card-img-top"
+								alt="Pokemon Image"
+								loading="lazy"
+								@error="handleImageError"
+							/>
+						</div>
+					</router-link>
 				</div>
 			</div>
 		</div>
@@ -76,14 +75,6 @@ export default {
 	box-shadow: rgb(0, 0, 0) 1px 0 8px;
 }
 
-.btn-primary:hover {
-	background-color: aqua;
-}
-
-.btn-primary {
-	border-style: hidden;
-}
-
 .title {
 	color: black;
 	margin-left: 10px;
@@ -93,5 +84,9 @@ export default {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+}
+
+.card-title {
+	color: black;
 }
 </style>
