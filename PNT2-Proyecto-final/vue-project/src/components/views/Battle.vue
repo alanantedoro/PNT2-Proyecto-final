@@ -347,6 +347,31 @@ export default {
 
 			this.enemigo();
 		},
+
+		//ESTA FUNCION CALCULA LA EFECTIVIDAD DEL TIPO DEL MOVIMIENTO
+		//EN RELACION AL POKEMON QUE ESTA SIENDO ATACADO
+		//RECIBE EL TIPO DEL MOVIMIENTO Y LOS TIPOS DEL POKEMON QUE RECIBE EL ATAQUE
+		calculateDebRes(moveType, types){
+			var indice = 1;
+			const doubleDamageTo = moveType.damage_relations.double_damage_to;
+			const halfDamageTo = moveType.damage_relations.half_damage_to;				
+			const noDamageTo = moveType.damage_relations.no_damage_to;
+
+			types.forEach(function(type) {
+				if(doubleDamageTo.some(tipo => tipo.name === type.name)){
+					indice = indice * 2;
+				}
+				if(halfDamageTo.some(tipo => tipo.name === type.name)){
+					indice = indice * 0,5;
+				}
+				if(noDamageTo.some(tipo => tipo.name === type.name)){
+					indice = 0;
+				}
+			});
+
+			return indice;
+		},
+		
 		rendirse() {
 			this.jugando = false;
 			this.mensaje = "Retirada";
