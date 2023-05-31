@@ -43,6 +43,9 @@ provide("userObject", userObject);
 					<li class="nav-item">
 						<RouterLink to="/Pokemons" class="link-navbar">Pokemons</RouterLink>
 					</li>
+					<li class="nav-item">
+						<RouterLink to="/Battle" class="link-navbar">Play</RouterLink>
+					</li>
 				</ul>
 				<ul class="navbar-nav nav-items-right">
 					<li class="nav-item" v-if="userObject">

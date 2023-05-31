@@ -14,6 +14,7 @@ import Login from "./components/views/login.vue";
 import Signup from "./components/views/signup.vue";
 import Terms from "./components/views/Terms.vue";
 import Profile from "./components/views/Profile.vue";
+import Battle from "./components/views/Battle.vue";
 
 import MonomaniacOneRegular from "@/fonts/MonomaniacOne-Regular.ttf";
 
@@ -37,6 +38,7 @@ const routes = [
 	{ path: "/signup", component: Signup },
 	{ path: "/Terms", component: Terms },
 	{ path: "/Profile", component: Profile },
+	{ path: "/Battle", component: Battle },
 ];
 
 const router = createRouter({

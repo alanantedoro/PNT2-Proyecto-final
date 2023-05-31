@@ -1,0 +1,338 @@
+<template>
+	<div class="fondo">
+		<div class="row" v-if="jugando">
+			<div class="container">
+				<div class="column">
+					<h1>Batalla</h1>
+					<div class="moves-history">
+						<div v-for="(item, index) in mensaje">
+							<p>{{ item }}</p>
+						</div>
+					</div>
+				</div>
+
+				<!-- USUARIO -->
+				<div class="card col m5 brown lighten-1 quitar-padding-lateral">
+					<div class="card-image">
+						<img
+							:src="pokemonUsuario.sprites?.other.home.front_default"
+							alt="Pokemon Image"
+							class="image girar-imagen"
+						/>
+					</div>
+
+					<div class="card-content grey lighten-2">
+						<i class="fa fa-heartbeat"></i>
+						<span class="right">{{ saludUsuario }}/100</span>
+						<div class="progress brown">
+							<div
+								class="determinate red"
+								:style="{ width: saludUsuario + '%' }"
+							></div>
+						</div>
+
+						<i class="fa fa-magic"></i>
+						<span class="right">{{ manaUsuario }}/100</span>
+						<div class="progress brown">
+							<div
+								class="determinate blue"
+								:style="{ width: manaUsuario + '%' }"
+							></div>
+						</div>
+					</div>
+
+					<div class="card-action barra-ataques brown darken-3">
+						<div
+							v-for="(item, index) in ataquesUsuario"
+							:key="index"
+							:class="['style-circle', item.type?.name]"
+						>
+							<a class="btn circle" @click="normal"
+								><i class="bi bi-bandaid-fill">{{ item.name }}</i></a
+							>
+						</div>
+						<a
+							:class="[
+								manaUsuario < 15 ? 'disabled' : 'green',
+								'btn-floating',
+								'style-circle',
+								'verde',
+							]"
+							@click="curar"
+							><i class="btn circle">Curar</i></a
+						>
+						<a class="style-circle rojo" @click="rendirse"
+							><i class="btn circle">Rendirse</i></a
+						>
+					</div>
+				</div>
+				<!-- ENEMIGO -->
+				<div
+					class="card col offset-m2 m5 brown lighten-1 quitar-padding-lateral"
+				>
+					<div class="card-image">
+						<img
+							:src="pokemonEnemigo.sprites?.other.home.front_default"
+							alt="Pokemon Image"
+							class="image"
+						/>
+					</div>
+
+					<div class="card-content grey lighten-2">
+						<i class="fa fa-heartbeat"></i>
+						<span class="right">{{ saludEnemigo }}/100</span>
+						<div class="progress brown">
+							<div
+								class="determinate red"
+								:style="{ width: saludEnemigo + '%' }"
+							></div>
+						</div>
+
+						<i class="fa fa-magic"></i>
+						<span class="right">{{ manaEnemigo }}/100</span>
+						<div class="progress brown">
+							<div
+								class="determinate blue"
+								:style="{ width: manaEnemigo + '%' }"
+							></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div v-else class="center-align">
+			<a href="#" class="yellow-text mensaje-final" @click="reinciar">
+				¡{{ mensaje }}!
+				<h6 class="yellow-text">Click para volver a intentar</h6>
+			</a>
+		</div>
+	</div>
+</template>
+
+<!-------------------------------------------------------->
+
+<script>
+import "../styles/type.css";
+
+export default {
+	data() {
+		return {
+			saludUsuario: 100,
+			manaUsuario: 100,
+			saludEnemigo: 100,
+			manaEnemigo: 100,
+			jugando: true,
+			mensaje: [],
+
+			pokemonUsuario: {},
+			pokemonEnemigo: {},
+
+			ataquesUsuario: [],
+			ataquesEnemigo: [],
+		};
+	},
+
+	created: async function () {
+		const response = await fetch(`https://pokeapi.co/api/v2/pokemon/1`);
+		this.pokemonUsuario = await response.json();
+
+		const response2 = await fetch(`https://pokeapi.co/api/v2/pokemon/4`);
+		this.pokemonEnemigo = await response2.json();
+
+		this.ataquesUsuario = this.pokemonUsuario.moves
+			.filter((move) => move.damage_class !== "status")
+			.slice(0, 3);
+
+		const movesWithDetailsUser = await Promise.all(
+			this.pokemonUsuario.moves.map((move) =>
+				fetch(move.move.url).then((response) => response.json())
+			)
+		);
+		movesWithDetailsUser.sort(() => Math.random() - 0.5);
+		this.ataquesUsuario = movesWithDetailsUser
+			.filter((move) => move.damage_class.name !== "status")
+			.slice(0, 3);
+
+		const movesWithDetailsEnemy = await Promise.all(
+			this.pokemonEnemigo.moves.map((move) =>
+				fetch(move.move.url).then((response) => response.json())
+			)
+		);
+		movesWithDetailsEnemy.sort(() => Math.random() - 0.5);
+		this.ataquesEnemigo = movesWithDetailsEnemy
+			.filter((move) => move.damage_class.name !== "status")
+			.slice(0, 3);
+
+		console.log(this.ataquesUsuario);
+	},
+	methods: {
+		batalla() {
+			if (this.saludUsuario <= 0) {
+				this.jugando = false;
+				this.mensaje = "Derrota";
+			}
+			if (this.saludEnemigo <= 0) {
+				this.jugando = false;
+				this.mensaje = "Victoria";
+			}
+		},
+		enemigo() {
+			var decision = Math.floor(Math.random() * 5) + 1;
+
+			if (
+				(this.manaEnemigo < 10 && decision === 1) ||
+				(this.manaEnemigo < 15 && decision === 2) ||
+				(this.saludEnemigo >= 90 && decision === 2)
+			) {
+				decision = 0;
+			}
+
+			switch (decision) {
+				// Ataque especial enemigo
+				case 1:
+					this.manaEnemigo -= 10;
+					var dañoEnemigo = Math.floor(Math.random() * 5) + 1 + 5;
+					this.saludUsuario -= dañoEnemigo;
+					this.mostrarMensaje(
+						"Ataque especial del enemigo pierdes " + dañoEnemigo + " de salud",
+						"blue-text"
+					);
+					break;
+
+				// Curación enemigo
+				case 2:
+					this.manaEnemigo -= 15;
+					var curacion = Math.floor(Math.random() * 5) + 1 + 5;
+
+					if (curacion + this.saludEnemigo > 100) {
+						this.saludEnemigo = 100;
+					} else {
+						this.saludEnemigo += curacion;
+					}
+
+					this.mostrarMensaje("El enemigo se cura " + curacion, "amber-text");
+					break;
+
+				// Ataque normal enemigo
+				default:
+					var dañoEnemigo = Math.floor(Math.random() * 5) + 1;
+					this.saludUsuario -= dañoEnemigo;
+					this.mostrarMensaje(
+						"Pierdes " + dañoEnemigo + " de salud",
+						"red-text"
+					);
+					break;
+			}
+
+			this.batalla();
+		},
+		normal() {
+			var daño = Math.floor(Math.random() * 5) + 1;
+			this.saludEnemigo -= daño;
+			this.mostrarMensaje("Causas " + daño + " de daño", "green-text");
+			this.enemigo();
+		},
+		especial() {
+			this.manaUsuario -= 10;
+			var daño = Math.floor(Math.random() * 5) + 1 + 5;
+			this.saludEnemigo -= daño;
+			this.mostrarMensaje(
+				"Ataque especial causas " + daño + " de daño",
+				"cyan-text"
+			);
+			this.enemigo();
+		},
+		curar() {
+			this.manaUsuario -= 15;
+			var curacion = Math.floor(Math.random() * 5) + 1 + 5;
+
+			this.mostrarMensaje("Te curas " + curacion, "lime-text");
+
+			if (curacion + this.saludUsuario > 100) {
+				this.saludUsuario = 100;
+			} else {
+				this.saludUsuario += curacion;
+			}
+
+			this.enemigo();
+		},
+		rendirse() {
+			this.jugando = false;
+			this.mensaje = "Retirada";
+		},
+		reinciar() {
+			this.saludUsuario = 100;
+			this.manaUsuario = 100;
+			this.saludEnemigo = 100;
+			this.manaEnemigo = 100;
+			this.jugando = true;
+			this.mensaje = "";
+		},
+		mostrarMensaje(mensaje, color) {
+			this.mensaje.push(mensaje);
+		},
+	},
+};
+</script>
+
+<style scoped>
+.fondo {
+	background: url("https://images3.alphacoders.com/966/966315.png") center
+		center fixed;
+	min-height: 100vh;
+	min-width: 100;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+	align-items: center;
+}
+
+.barra-ataques {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
+
+.quitar-padding-lateral {
+	padding-left: 0 !important;
+	padding-right: 0 !important;
+}
+
+.mensaje-final {
+	font-size: 10em;
+}
+
+.girar-imagen {
+	transform: scaleX(-1);
+	filter: FlipH;
+}
+.container {
+	display: flex;
+	margin: 0%;
+	padding-left: 0%;
+	background-color: black;
+}
+
+.moves-history {
+	overflow: auto;
+	overflow-y: scroll;
+	max-height: 77vh;
+}
+
+.column {
+	flex-direction: column;
+}
+
+.style-circle {
+	border-radius: 15px !important;
+}
+
+.verde {
+	background-color: green;
+}
+
+.rojo {
+	background-color: red;
+}
+</style>
