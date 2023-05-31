@@ -4,7 +4,7 @@
 			<div class="container">
 				<div class="column">
 					<h1>Batalla</h1>
-					<div class="moves-history">
+					<div class="moves-history" >
 						<div v-for="(item, index) in mensaje">
 							<p>{{ item }}</p>
 						</div>
@@ -53,7 +53,7 @@
 							:key="index"
 							:class="['style-circle', item.type?.name]"
 						>
-							<a class="btn circle" @click="normal(item)"
+							<a class="btn circle" @click="turno(item)"
 								><i class="bi bi-bandaid-fill">{{ item.name }}</i></a
 							>
 						</div>
@@ -197,8 +197,18 @@ export default {
 		if (speedEnemy > speedUser) {
 			this.primero = false;
 		}
+
 	},
 	methods: {
+		turno(move){
+			if(this.primero){
+				this.normal(move);
+				this.enemigo();				
+			}else{
+				this.enemigo();
+				this.normal(move);
+			}
+		},
 		batalla() {
 			if (this.saludUsuario <= 0) {
 				this.jugando = false;
@@ -212,50 +222,61 @@ export default {
 		enemigo() {
 			var decision;
 
-			if (this.manaEnemigo < 15 || this.saludEnemigo >= 90) {
+			if (this.manaEnemigo < 15 || this.saludEnemigo >= (this.hpEnemigo-5)) {
 				decision = Math.floor(Math.random() * 3);
 			} else {
 				decision = Math.floor(Math.random() * 4);
 			}
 
 			if (decision <= 2) {
-				var atk;
-				var def;
-				if (this.ataquesEnemigo[decision].damage_class.name === "physical") {
-					atk = this.pokemonEnemigo.stats.find(
-						(stat) => stat.stat.name === "attack"
-					).base_stat;
-					def = this.pokemonUsuario.stats.find(
-						(stat) => stat.stat.name === "defense"
-					).base_stat;
-				} else {
-					atk = this.pokemonEnemigo.stats.find(
-						(stat) => stat.stat.name === "special-attack"
-					).base_stat;
-					def = this.pokemonUsuario.stats.find(
-						(stat) => stat.stat.name === "special-defense"
-					).base_stat;
-				}
+				const randomNumber = Math.floor(Math.random() * 100) + 1;
+				if(randomNumber<=this.ataquesEnemigo[decision].accuracy){
+					var atk;
+					var def;
+					if (this.ataquesEnemigo[decision].damage_class.name === "physical") {
+						atk = this.pokemonEnemigo.stats.find(
+							(stat) => stat.stat.name === "attack"
+						).base_stat;
+						def = this.pokemonUsuario.stats.find(
+							(stat) => stat.stat.name === "defense"
+						).base_stat;
+					} else {
+						atk = this.pokemonEnemigo.stats.find(
+							(stat) => stat.stat.name === "special-attack"
+						).base_stat;
+						def = this.pokemonUsuario.stats.find(
+							(stat) => stat.stat.name === "special-defense"
+						).base_stat;
+					}
 
-				var daño =
-					Math.floor(
-						(5 * this.ataquesEnemigo[decision].power * (atk / def)) / 50
-					) + 1;
-				this.saludUsuario -= daño;
-				this.mostrarMensaje(
-					"El enemigo utilizo " +
-						this.ataquesEnemigo[decision].name +
-						", y causo " +
-						daño +
-						" de daño",
-					"green-text"
-				);
+					var daño =
+						Math.floor(
+							(5 * this.ataquesEnemigo[decision].power * (atk / def)) / 50
+						) + 1;
+					this.saludUsuario -= daño;
+					this.mostrarMensaje(
+						"El enemigo utilizo " +
+							this.ataquesEnemigo[decision].name +
+							", y causo " +
+							daño +
+							" de daño",
+						"green-text"
+					);
+				} else {
+					this.mostrarMensaje(
+						"El enemigo utilizo " +
+							this.ataquesEnemigo[decision].name +
+							", y fallo",
+						"green-text"
+					);
+				}
+				
 			} else {
 				this.manaEnemigo -= 15;
 				var curacion = Math.floor(Math.random() * 5) + 1 + 5;
 
-				if (curacion + this.saludEnemigo > 100) {
-					this.saludEnemigo = 100;
+				if (curacion + this.saludEnemigo > this.hpEnemigo) {
+					this.saludEnemigo = this.hpEnemigo;
 				} else {
 					this.saludEnemigo += curacion;
 				}
@@ -266,32 +287,41 @@ export default {
 			this.batalla();
 		},
 		normal(move) {
-			var atk;
-			var def;
-			if (move.damage_class.name === "physical") {
-				atk = this.pokemonUsuario.stats.find(
-					(stat) => stat.stat.name === "attack"
-				).base_stat;
-				def = this.pokemonEnemigo.stats.find(
-					(stat) => stat.stat.name === "defense"
-				).base_stat;
-			} else {
-				atk = this.pokemonUsuario.stats.find(
-					(stat) => stat.stat.name === "special-attack"
-				).base_stat;
-				def = this.pokemonEnemigo.stats.find(
-					(stat) => stat.stat.name === "special-defense"
-				).base_stat;
+			const randomNumber = Math.floor(Math.random() * 100) + 1;
+			if(randomNumber<=move.accuracy)
+			{
+				var atk;
+				var def;
+				if (move.damage_class.name === "physical") {
+					atk = this.pokemonUsuario.stats.find(
+						(stat) => stat.stat.name === "attack"
+					).base_stat;
+					def = this.pokemonEnemigo.stats.find(
+						(stat) => stat.stat.name === "defense"
+					).base_stat;
+				} else {
+					atk = this.pokemonUsuario.stats.find(
+						(stat) => stat.stat.name === "special-attack"
+					).base_stat;
+					def = this.pokemonEnemigo.stats.find(
+						(stat) => stat.stat.name === "special-defense"
+					).base_stat;
+				}
+
+				var daño = Math.floor((5 * move.power * (atk / def)) / 50) + 1;
+				this.saludEnemigo -= daño;
+				this.mostrarMensaje(
+					"Utilizaste " + move.name + ", y causaste " + daño + " de daño",
+					"green-text"
+				);
+			}else{
+				this.mostrarMensaje(
+					"Utilizaste " + move.name + ", y fallaste",
+					"green-text"
+				);
 			}
 
-			var daño = Math.floor((5 * move.power * (atk / def)) / 50) + 1;
-			this.saludEnemigo -= daño;
-			this.mostrarMensaje(
-				"Utilizaste " + move.name + ", y causaste " + daño + " de daño",
-				"green-text"
-			);
-
-			this.enemigo();
+			this.batalla();
 		},
 		especial() {
 			this.manaUsuario -= 10;
