@@ -4,7 +4,7 @@
 			<div class="container">
 				<div class="column">
 					<h1>Batalla</h1>
-					<div class="moves-history" >
+					<div class="moves-history">
 						<div v-for="(item, index) in mensaje">
 							<p>{{ item }}</p>
 						</div>
@@ -197,14 +197,13 @@ export default {
 		if (speedEnemy > speedUser) {
 			this.primero = false;
 		}
-
 	},
 	methods: {
-		turno(move){
-			if(this.primero){
+		turno(move) {
+			if (this.primero) {
 				this.normal(move);
-				this.enemigo();				
-			}else{
+				this.enemigo();
+			} else {
 				this.enemigo();
 				this.normal(move);
 			}
@@ -222,7 +221,7 @@ export default {
 		enemigo() {
 			var decision;
 
-			if (this.manaEnemigo < 15 || this.saludEnemigo >= (this.hpEnemigo-5)) {
+			if (this.manaEnemigo < 15 || this.saludEnemigo >= this.hpEnemigo - 5) {
 				decision = Math.floor(Math.random() * 3);
 			} else {
 				decision = Math.floor(Math.random() * 4);
@@ -230,7 +229,7 @@ export default {
 
 			if (decision <= 2) {
 				const randomNumber = Math.floor(Math.random() * 100) + 1;
-				if(randomNumber<=this.ataquesEnemigo[decision].accuracy){
+				if (randomNumber <= this.ataquesEnemigo[decision].accuracy) {
 					var atk;
 					var def;
 					if (this.ataquesEnemigo[decision].damage_class.name === "physical") {
@@ -270,7 +269,6 @@ export default {
 						"green-text"
 					);
 				}
-				
 			} else {
 				this.manaEnemigo -= 15;
 				var curacion = Math.floor(Math.random() * 5) + 1 + 5;
@@ -288,8 +286,7 @@ export default {
 		},
 		normal(move) {
 			const randomNumber = Math.floor(Math.random() * 100) + 1;
-			if(randomNumber<=move.accuracy)
-			{
+			if (randomNumber <= move.accuracy) {
 				var atk;
 				var def;
 				if (move.damage_class.name === "physical") {
@@ -314,7 +311,7 @@ export default {
 					"Utilizaste " + move.name + ", y causaste " + daño + " de daño",
 					"green-text"
 				);
-			}else{
+			} else {
 				this.mostrarMensaje(
 					"Utilizaste " + move.name + ", y fallaste",
 					"green-text"
@@ -322,16 +319,6 @@ export default {
 			}
 
 			this.batalla();
-		},
-		especial() {
-			this.manaUsuario -= 10;
-			var daño = Math.floor(Math.random() * 5) + 1 + 5;
-			this.saludEnemigo -= daño;
-			this.mostrarMensaje(
-				"Ataque especial causas " + daño + " de daño",
-				"cyan-text"
-			);
-			this.enemigo();
 		},
 		curar() {
 			this.manaUsuario -= 15;
@@ -348,30 +335,6 @@ export default {
 			this.enemigo();
 		},
 
-		//ESTA FUNCION CALCULA LA EFECTIVIDAD DEL TIPO DEL MOVIMIENTO
-		//EN RELACION AL POKEMON QUE ESTA SIENDO ATACADO
-		//RECIBE EL TIPO DEL MOVIMIENTO Y LOS TIPOS DEL POKEMON QUE RECIBE EL ATAQUE
-		calculateDebRes(moveType, types){
-			var indice = 1;
-			const doubleDamageTo = moveType.damage_relations.double_damage_to;
-			const halfDamageTo = moveType.damage_relations.half_damage_to;				
-			const noDamageTo = moveType.damage_relations.no_damage_to;
-
-			types.forEach(function(type) {
-				if(doubleDamageTo.some(tipo => tipo.name === type.name)){
-					indice = indice * 2;
-				}
-				if(halfDamageTo.some(tipo => tipo.name === type.name)){
-					indice = indice * 0,5;
-				}
-				if(noDamageTo.some(tipo => tipo.name === type.name)){
-					indice = 0;
-				}
-			});
-
-			return indice;
-		},
-		
 		rendirse() {
 			this.jugando = false;
 			this.mensaje = "Retirada";
@@ -380,7 +343,9 @@ export default {
 			location.reload();
 		},
 		mostrarMensaje(msg, color) {
-			this.mensaje.push(msg);
+			if (this.jugando) {
+				this.mensaje.push(msg);
+			}
 		},
 	},
 };
