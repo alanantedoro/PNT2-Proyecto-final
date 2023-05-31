@@ -13,6 +13,12 @@
 
 				<!-- USUARIO -->
 				<div class="card col m5 brown lighten-1 quitar-padding-lateral">
+					<h1 style="text-align: center">
+						{{
+							pokemonUsuario.name?.charAt(0).toUpperCase() +
+							pokemonUsuario.name?.slice(1)
+						}}
+					</h1>
 					<div class="card-image">
 						<img
 							:src="pokemonUsuario.sprites?.other.home.front_default"
@@ -23,11 +29,11 @@
 
 					<div class="card-content grey lighten-2">
 						<i class="fa fa-heartbeat"></i>
-						<span class="right">{{ saludUsuario }}/100</span>
+						<span class="right">{{ saludUsuario }}/{{ hpUsuario }}</span>
 						<div class="progress brown">
 							<div
 								class="determinate red"
-								:style="{ width: saludUsuario + '%' }"
+								:style="{ width: (saludUsuario / hpUsuario) * 100 + '%' }"
 							></div>
 						</div>
 
@@ -47,7 +53,7 @@
 							:key="index"
 							:class="['style-circle', item.type?.name]"
 						>
-							<a class="btn circle" @click="normal"
+							<a class="btn circle" @click="normal(item)"
 								><i class="bi bi-bandaid-fill">{{ item.name }}</i></a
 							>
 						</div>
@@ -61,7 +67,7 @@
 							@click="curar"
 							><i class="btn circle">Curar</i></a
 						>
-						<a class="style-circle rojo" @click="rendirse"
+						<a class="style-circle red" @click="rendirse"
 							><i class="btn circle">Rendirse</i></a
 						>
 					</div>
@@ -70,6 +76,12 @@
 				<div
 					class="card col offset-m2 m5 brown lighten-1 quitar-padding-lateral"
 				>
+					<h1 style="text-align: center">
+						{{
+							pokemonEnemigo.name?.charAt(0).toUpperCase() +
+							pokemonEnemigo.name?.slice(1)
+						}}
+					</h1>
 					<div class="card-image">
 						<img
 							:src="pokemonEnemigo.sprites?.other.home.front_default"
@@ -80,11 +92,11 @@
 
 					<div class="card-content grey lighten-2">
 						<i class="fa fa-heartbeat"></i>
-						<span class="right">{{ saludEnemigo }}/100</span>
+						<span class="right">{{ saludEnemigo }}/{{ hpEnemigo }}</span>
 						<div class="progress brown">
 							<div
 								class="determinate red"
-								:style="{ width: saludEnemigo + '%' }"
+								:style="{ width: (saludEnemigo / hpEnemigo) * 100 + '%' }"
 							></div>
 						</div>
 
@@ -118,9 +130,11 @@ import "../styles/type.css";
 export default {
 	data() {
 		return {
-			saludUsuario: 100,
+			hpUsuario: 0,
+			hpEnemigo: 0,
+			saludUsuario: 0,
 			manaUsuario: 100,
-			saludEnemigo: 100,
+			saludEnemigo: 0,
 			manaEnemigo: 100,
 			jugando: true,
 			mensaje: [],
@@ -130,6 +144,8 @@ export default {
 
 			ataquesUsuario: [],
 			ataquesEnemigo: [],
+
+			primero: true,
 		};
 	},
 
@@ -139,6 +155,13 @@ export default {
 
 		const response2 = await fetch(`https://pokeapi.co/api/v2/pokemon/4`);
 		this.pokemonEnemigo = await response2.json();
+
+		this.saludUsuario = this.hpUsuario = this.pokemonUsuario.stats.find(
+			(stat) => stat.stat.name === "hp"
+		).base_stat;
+		this.saludEnemigo = this.hpEnemigo = this.pokemonEnemigo.stats.find(
+			(stat) => stat.stat.name === "hp"
+		).base_stat;
 
 		this.ataquesUsuario = this.pokemonUsuario.moves
 			.filter((move) => move.damage_class !== "status")
@@ -164,7 +187,16 @@ export default {
 			.filter((move) => move.damage_class.name !== "status")
 			.slice(0, 3);
 
-		console.log(this.ataquesUsuario);
+		const speedUser = this.pokemonUsuario.stats.find(
+			(stat) => stat.stat.name === "speed"
+		).base_stat;
+		const speedEnemy = this.pokemonEnemigo.stats.find(
+			(stat) => stat.stat.name === "speed"
+		).base_stat;
+
+		if (speedEnemy > speedUser) {
+			this.primero = false;
+		}
 	},
 	methods: {
 		batalla() {
@@ -178,59 +210,87 @@ export default {
 			}
 		},
 		enemigo() {
-			var decision = Math.floor(Math.random() * 5) + 1;
+			var decision;
 
-			if (
-				(this.manaEnemigo < 10 && decision === 1) ||
-				(this.manaEnemigo < 15 && decision === 2) ||
-				(this.saludEnemigo >= 90 && decision === 2)
-			) {
-				decision = 0;
+			if (this.manaEnemigo < 15 || this.saludEnemigo >= 90) {
+				decision = Math.floor(Math.random() * 3);
+			} else {
+				decision = Math.floor(Math.random() * 4);
 			}
 
-			switch (decision) {
-				// Ataque especial enemigo
-				case 1:
-					this.manaEnemigo -= 10;
-					var dañoEnemigo = Math.floor(Math.random() * 5) + 1 + 5;
-					this.saludUsuario -= dañoEnemigo;
-					this.mostrarMensaje(
-						"Ataque especial del enemigo pierdes " + dañoEnemigo + " de salud",
-						"blue-text"
-					);
-					break;
+			if (decision <= 2) {
+				var atk;
+				var def;
+				if (this.ataquesEnemigo[decision].damage_class.name === "physical") {
+					atk = this.pokemonEnemigo.stats.find(
+						(stat) => stat.stat.name === "attack"
+					).base_stat;
+					def = this.pokemonUsuario.stats.find(
+						(stat) => stat.stat.name === "defense"
+					).base_stat;
+				} else {
+					atk = this.pokemonEnemigo.stats.find(
+						(stat) => stat.stat.name === "special-attack"
+					).base_stat;
+					def = this.pokemonUsuario.stats.find(
+						(stat) => stat.stat.name === "special-defense"
+					).base_stat;
+				}
 
-				// Curación enemigo
-				case 2:
-					this.manaEnemigo -= 15;
-					var curacion = Math.floor(Math.random() * 5) + 1 + 5;
+				var daño =
+					Math.floor(
+						(5 * this.ataquesEnemigo[decision].power * (atk / def)) / 50
+					) + 1;
+				this.saludUsuario -= daño;
+				this.mostrarMensaje(
+					"El enemigo utilizo " +
+						this.ataquesEnemigo[decision].name +
+						", y causo " +
+						daño +
+						" de daño",
+					"green-text"
+				);
+			} else {
+				this.manaEnemigo -= 15;
+				var curacion = Math.floor(Math.random() * 5) + 1 + 5;
 
-					if (curacion + this.saludEnemigo > 100) {
-						this.saludEnemigo = 100;
-					} else {
-						this.saludEnemigo += curacion;
-					}
+				if (curacion + this.saludEnemigo > 100) {
+					this.saludEnemigo = 100;
+				} else {
+					this.saludEnemigo += curacion;
+				}
 
-					this.mostrarMensaje("El enemigo se cura " + curacion, "amber-text");
-					break;
-
-				// Ataque normal enemigo
-				default:
-					var dañoEnemigo = Math.floor(Math.random() * 5) + 1;
-					this.saludUsuario -= dañoEnemigo;
-					this.mostrarMensaje(
-						"Pierdes " + dañoEnemigo + " de salud",
-						"red-text"
-					);
-					break;
+				this.mostrarMensaje("El enemigo se cura " + curacion, "amber-text");
 			}
 
 			this.batalla();
 		},
-		normal() {
-			var daño = Math.floor(Math.random() * 5) + 1;
+		normal(move) {
+			var atk;
+			var def;
+			if (move.damage_class.name === "physical") {
+				atk = this.pokemonUsuario.stats.find(
+					(stat) => stat.stat.name === "attack"
+				).base_stat;
+				def = this.pokemonEnemigo.stats.find(
+					(stat) => stat.stat.name === "defense"
+				).base_stat;
+			} else {
+				atk = this.pokemonUsuario.stats.find(
+					(stat) => stat.stat.name === "special-attack"
+				).base_stat;
+				def = this.pokemonEnemigo.stats.find(
+					(stat) => stat.stat.name === "special-defense"
+				).base_stat;
+			}
+
+			var daño = Math.floor((5 * move.power * (atk / def)) / 50) + 1;
 			this.saludEnemigo -= daño;
-			this.mostrarMensaje("Causas " + daño + " de daño", "green-text");
+			this.mostrarMensaje(
+				"Utilizaste " + move.name + ", y causaste " + daño + " de daño",
+				"green-text"
+			);
+
 			this.enemigo();
 		},
 		especial() {
@@ -262,21 +322,26 @@ export default {
 			this.mensaje = "Retirada";
 		},
 		reinciar() {
-			this.saludUsuario = 100;
-			this.manaUsuario = 100;
-			this.saludEnemigo = 100;
-			this.manaEnemigo = 100;
-			this.jugando = true;
-			this.mensaje = "";
+			location.reload();
 		},
-		mostrarMensaje(mensaje, color) {
-			this.mensaje.push(mensaje);
+		mostrarMensaje(msg, color) {
+			this.mensaje.push(msg);
 		},
 	},
 };
 </script>
 
 <style scoped>
+.card-content {
+	padding-bottom: 15px;
+}
+.card-action {
+	padding-bottom: 15px;
+}
+.image {
+	padding-bottom: 5px;
+	margin-top: -12vh;
+}
 .fondo {
 	background: url("https://images3.alphacoders.com/966/966315.png") center
 		center fixed;
@@ -322,17 +387,22 @@ export default {
 
 .column {
 	flex-direction: column;
+	width: 30vh;
 }
 
 .style-circle {
-	border-radius: 15px !important;
+	border-radius: 15px;
 }
 
 .verde {
 	background-color: green;
 }
 
-.rojo {
+.red {
 	background-color: red;
+}
+
+.blue {
+	background-color: blue;
 }
 </style>
