@@ -111,8 +111,7 @@ async function obtMoves(poke) {
 
 async function obtEnemyPokemon() {
 	const id = Math.floor(Math.random() * 386) + 1;
-	const id2 = 9;
-	const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id2}`);
+	const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
 	const pokeEnemy = await response.json();
 	return pokeEnemy;
 }

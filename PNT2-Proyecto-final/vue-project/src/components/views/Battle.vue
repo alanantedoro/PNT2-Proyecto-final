@@ -51,7 +51,11 @@
 						<div
 							v-for="(item, index) in ataquesUsuario"
 							:key="index"
-							:class="['style-circle', item.type?.name]"
+							:class="[
+								'style-circle',
+								item.type?.name,
+								{ 'disabled-pointer': !visible },
+							]"
 						>
 							<a class="btn circle" @click="turno(item)"
 								><i class="bi bi-bandaid-fill">{{ item.name }}</i></a
@@ -63,11 +67,14 @@
 								'btn-floating',
 								'style-circle',
 								'verde',
+								{ 'disabled-pointer': !visible },
 							]"
 							@click="curar"
 							><i class="btn circle">Curar</i></a
 						>
-						<a class="style-circle red" @click="rendirse"
+						<a
+							:class="['style-circle', 'red', { 'disabled-pointer': !visible }]"
+							@click="rendirse"
 							><i class="btn circle">Rendirse</i></a
 						>
 					</div>
@@ -127,7 +134,6 @@
 <script>
 import "../styles/type.css";
 import {
-	calculateDebRes,
 	calculateDmg,
 	obtDecision,
 	calculateFastest,
@@ -152,11 +158,12 @@ export default {
 			ataquesUsuario: [],
 			ataquesEnemigo: [],
 			primero: true,
+			visible: true,
 		};
 	},
 
 	created: async function () {
-		const response = await fetch(`https://pokeapi.co/api/v2/pokemon/145`);
+		const response = await fetch(`https://pokeapi.co/api/v2/pokemon/134`);
 		this.pokemonUsuario = await response.json();
 
 		this.pokemonEnemigo = await obtEnemyPokemon();
@@ -175,21 +182,30 @@ export default {
 	},
 	methods: {
 		turno(move) {
+			this.visible = false;
 			if (this.primero) {
 				this.normal(move);
-				this.enemigo();
+				setTimeout(() => {
+					this.enemigo();
+					this.visible = true;
+				}, 1000);
 			} else {
 				this.enemigo();
-				this.normal(move);
+				setTimeout(() => {
+					this.normal(move);
+					this.visible = true;
+				}, 1000);
 			}
 		},
 		batalla() {
-			if (this.saludUsuario <= 0) {
-				this.jugando = false;
-				this.mensaje = "Derrota";
-			} else if (this.saludEnemigo <= 0) {
-				this.jugando = false;
-				this.mensaje = "Victoria";
+			if (this.jugando) {
+				if (this.saludUsuario <= 0) {
+					this.jugando = false;
+					this.mensaje = "Derrota";
+				} else if (this.saludEnemigo <= 0) {
+					this.jugando = false;
+					this.mensaje = "Victoria";
+				}
 			}
 		},
 		async enemigo() {
@@ -214,7 +230,7 @@ export default {
 					);
 					const msg = relatedDamageMsg(indice);
 					if (msg !== "") {
-						this.mostrarMensaje(msg);
+						this.mostrarMensaje(msg, "");
 					}
 				} else {
 					this.mostrarMensaje(
@@ -249,7 +265,7 @@ export default {
 				);
 				const msg = relatedDamageMsg(indice);
 				if (msg !== "") {
-					this.mostrarMensaje(msg);
+					this.mostrarMensaje(msg, "");
 				}
 			} else {
 				this.mostrarMensaje(
@@ -260,15 +276,17 @@ export default {
 			this.batalla();
 		},
 		curar() {
-			this.manaUsuario -= 15;
-			let curacion = Math.floor(Math.random() * 5) + 1 + 5;
-			this.mostrarMensaje("Te curas " + curacion, "lime-text");
-			if (curacion + this.saludUsuario > 100) {
-				this.saludUsuario = 100;
-			} else {
-				this.saludUsuario += curacion;
+			if (this.manaUsuario >= 15) {
+				this.manaUsuario -= 15;
+				let curacion = Math.floor(Math.random() * 5) + 1 + 5;
+				this.mostrarMensaje("Te curas " + curacion, "lime-text");
+				if (curacion + this.saludUsuario > 100) {
+					this.saludUsuario = 100;
+				} else {
+					this.saludUsuario += curacion;
+				}
+				this.enemigo();
 			}
-			this.enemigo();
 		},
 		rendirse() {
 			this.jugando = false;
@@ -280,7 +298,14 @@ export default {
 		mostrarMensaje(msg, color) {
 			if (this.jugando) {
 				this.mensaje.push(msg);
+				this.scrollToBottom();
 			}
+		},
+		scrollToBottom() {
+			this.$nextTick(() => {
+				const container = document.querySelector(".moves-history");
+				container.scrollTop = container.scrollHeight;
+			});
 		},
 	},
 };
@@ -332,12 +357,17 @@ export default {
 	margin: 0%;
 	padding-left: 0%;
 	background-color: black;
+	border-radius: 10px;
+	height: 90vh;
+	width: 167vh;
 }
 
 .moves-history {
 	overflow: auto;
 	overflow-y: scroll;
-	max-height: 77vh;
+	max-height: 82.5vh;
+	padding-left: 4px;
+	padding-right: 4px;
 }
 
 .column {
@@ -359,5 +389,9 @@ export default {
 
 .blue {
 	background-color: blue;
+}
+
+.disabled-pointer {
+	pointer-events: none;
 }
 </style>
