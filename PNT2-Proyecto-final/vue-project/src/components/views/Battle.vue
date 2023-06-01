@@ -132,6 +132,7 @@ import {
 	obtDecision,
 	calculateFastest,
 	obtMoves,
+	obtEnemyPokemon,
 } from "../functions/BattleFunctions.js";
 
 export default {
@@ -157,8 +158,7 @@ export default {
 		const response = await fetch(`https://pokeapi.co/api/v2/pokemon/145`);
 		this.pokemonUsuario = await response.json();
 
-		const response2 = await fetch(`https://pokeapi.co/api/v2/pokemon/101`);
-		this.pokemonEnemigo = await response2.json();
+		this.pokemonEnemigo = await obtEnemyPokemon();
 
 		this.saludUsuario = this.hpUsuario = this.pokemonUsuario.stats.find(
 			(stat) => stat.stat.name === "hp"
@@ -199,7 +199,7 @@ export default {
 				this.hpEnemigo
 			);
 			if (decision <= 2) {
-				const randomNumber = Math.floor(Math.random() * 100) + 1;
+				var randomNumber = Math.floor(Math.random() * 100) + 1;
 				const move = this.ataquesEnemigo[decision];
 				if (randomNumber <= move.accuracy) {
 					const daño = calculateDmg(
@@ -235,7 +235,7 @@ export default {
 			this.batalla();
 		},
 		normal(move) {
-			const randomNumber = Math.floor(Math.random() * 100) + 1;
+			var randomNumber = Math.floor(Math.random() * 100) + 1;
 			if (randomNumber <= move.accuracy) {
 				const daño = calculateDmg(
 					move,

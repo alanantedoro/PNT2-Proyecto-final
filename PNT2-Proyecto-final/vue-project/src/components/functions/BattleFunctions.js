@@ -19,6 +19,8 @@ function calculateDebRes(moveType, types) {
 		}
 	});
 
+	console.log(indice);
+
 	return indice;
 }
 
@@ -26,6 +28,7 @@ function calculateDmg(move, offPoke, defPoke) {
 	var dmg = 0;
 	const atk = obtAtk(move, offPoke);
 	const def = obtDef(move, defPoke);
+	//const moveType = await fetch(move.type.url);
 	dmg = Math.floor((5 * move.power * (atk / def)) / 50) + 1;
 	return dmg;
 }
@@ -91,10 +94,18 @@ async function obtMoves(poke) {
 	return moves;
 }
 
+async function obtEnemyPokemon() {
+	const id = Math.floor(Math.random() * 386) + 1;
+	const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+	const pokeEnemy = await response.json();
+	return pokeEnemy;
+}
+
 export {
 	calculateDebRes,
 	calculateDmg,
 	obtDecision,
 	calculateFastest,
 	obtMoves,
+	obtEnemyPokemon,
 };
