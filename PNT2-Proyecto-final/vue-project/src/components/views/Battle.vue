@@ -165,7 +165,6 @@ export default {
 	created: async function () {
 		const response = await fetch(`https://pokeapi.co/api/v2/pokemon/134`);
 		this.pokemonUsuario = await response.json();
-
 		this.pokemonEnemigo = await obtEnemyPokemon();
 
 		this.saludUsuario = this.hpUsuario = this.pokemonUsuario.stats.find(
@@ -320,7 +319,7 @@ export default {
 }
 .image {
 	padding-bottom: 5px;
-	margin-top: -8vh;
+	margin-top: -5.5vh;
 }
 .fondo {
 	background: url("https://images3.alphacoders.com/966/966315.png") center
