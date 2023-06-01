@@ -133,6 +133,7 @@ import {
 	calculateFastest,
 	obtMoves,
 	obtEnemyPokemon,
+	relatedDamageMsg,
 } from "../functions/BattleFunctions.js";
 
 export default {
@@ -186,36 +187,35 @@ export default {
 			if (this.saludUsuario <= 0) {
 				this.jugando = false;
 				this.mensaje = "Derrota";
-			}
-			if (this.saludEnemigo <= 0) {
+			} else if (this.saludEnemigo <= 0) {
 				this.jugando = false;
 				this.mensaje = "Victoria";
 			}
 		},
-		enemigo() {
+		async enemigo() {
 			const decision = obtDecision(
 				this.manaEnemigo,
 				this.saludEnemigo,
 				this.hpEnemigo
 			);
 			if (decision <= 2) {
-				var randomNumber = Math.floor(Math.random() * 100) + 1;
+				let randomNumber = Math.floor(Math.random() * 100) + 1;
 				const move = this.ataquesEnemigo[decision];
 				if (randomNumber <= move.accuracy) {
-					const daño = calculateDmg(
+					const { dmg, indice } = await calculateDmg(
 						move,
 						this.pokemonEnemigo,
 						this.pokemonUsuario
 					);
-					this.saludUsuario -= daño;
+					this.saludUsuario -= dmg;
 					this.mostrarMensaje(
-						"El enemigo utilizo " +
-							move.name +
-							", y causo " +
-							daño +
-							" de daño",
+						"El enemigo utilizo " + move.name + ", y causo " + dmg + " de daño",
 						"green-text"
 					);
+					const msg = relatedDamageMsg(indice);
+					if (msg !== "") {
+						this.mostrarMensaje(msg);
+					}
 				} else {
 					this.mostrarMensaje(
 						"El enemigo utilizo " + move.name + ", y fallo",
@@ -224,7 +224,7 @@ export default {
 				}
 			} else {
 				this.manaEnemigo -= 15;
-				var curacion = Math.floor(Math.random() * 5) + 1 + 5;
+				let curacion = Math.floor(Math.random() * 5) + 1 + 5;
 				if (curacion + this.saludEnemigo > this.hpEnemigo) {
 					this.saludEnemigo = this.hpEnemigo;
 				} else {
@@ -234,19 +234,23 @@ export default {
 			}
 			this.batalla();
 		},
-		normal(move) {
-			var randomNumber = Math.floor(Math.random() * 100) + 1;
+		async normal(move) {
+			let randomNumber = Math.floor(Math.random() * 100) + 1;
 			if (randomNumber <= move.accuracy) {
-				const daño = calculateDmg(
+				const { dmg, indice } = await calculateDmg(
 					move,
 					this.pokemonUsuario,
 					this.pokemonEnemigo
 				);
-				this.saludEnemigo -= daño;
+				this.saludEnemigo -= dmg;
 				this.mostrarMensaje(
-					"Utilizaste " + move.name + ", y causaste " + daño + " de daño",
+					"Utilizaste " + move.name + ", y causaste " + dmg + " de daño",
 					"green-text"
 				);
+				const msg = relatedDamageMsg(indice);
+				if (msg !== "") {
+					this.mostrarMensaje(msg);
+				}
 			} else {
 				this.mostrarMensaje(
 					"Utilizaste " + move.name + ", y fallaste",
@@ -257,7 +261,7 @@ export default {
 		},
 		curar() {
 			this.manaUsuario -= 15;
-			var curacion = Math.floor(Math.random() * 5) + 1 + 5;
+			let curacion = Math.floor(Math.random() * 5) + 1 + 5;
 			this.mostrarMensaje("Te curas " + curacion, "lime-text");
 			if (curacion + this.saludUsuario > 100) {
 				this.saludUsuario = 100;

@@ -2,39 +2,54 @@
 //EN RELACION AL POKEMON QUE ESTA SIENDO ATACADO
 //RECIBE EL TIPO DEL MOVIMIENTO Y LOS TIPOS DEL POKEMON QUE RECIBE EL ATAQUE
 function calculateDebRes(moveType, types) {
-	var indice = 1;
+	let indice = 1;
 	const doubleDamageTo = moveType.damage_relations.double_damage_to;
 	const halfDamageTo = moveType.damage_relations.half_damage_to;
 	const noDamageTo = moveType.damage_relations.no_damage_to;
-
 	types.forEach(function (type) {
-		if (doubleDamageTo.some((tipo) => tipo.name === type.name)) {
-			indice = indice * 2;
+		if (doubleDamageTo.some((tipo) => tipo.name === type.type.name)) {
+			indice *= 2;
 		}
-		if (halfDamageTo.some((tipo) => tipo.name === type.name)) {
-			(indice = indice * 0), 5;
+		if (halfDamageTo.some((tipo) => tipo.name === type.type.name)) {
+			indice *= 0.5;
 		}
-		if (noDamageTo.some((tipo) => tipo.name === type.name)) {
+		if (noDamageTo.some((tipo) => tipo.name === type.type.name)) {
 			indice = 0;
 		}
 	});
-
-	console.log(indice);
-
 	return indice;
 }
 
-function calculateDmg(move, offPoke, defPoke) {
-	var dmg = 0;
+async function calculateDmg(move, offPoke, defPoke) {
+	let dmg = 0;
 	const atk = obtAtk(move, offPoke);
 	const def = obtDef(move, defPoke);
-	//const moveType = await fetch(move.type.url);
-	dmg = Math.floor((5 * move.power * (atk / def)) / 50) + 1;
-	return dmg;
+	const response = await fetch(move.type.url);
+	const moveType = await response.json();
+	const indice = calculateDebRes(moveType, defPoke.types);
+	dmg = Math.floor((5 * move.power * (atk / def)) / 50 + 1) * indice;
+	return { dmg, indice };
+}
+
+function relatedDamageMsg(indice) {
+	var msg = "";
+	const valorEntero = indice * 10;
+	switch (valorEntero) {
+		case 0:
+			msg = "El ataque no hace efecto";
+			break;
+		case 5:
+			msg = "El ataque es poco efectivo";
+			break;
+		case 20:
+			msg = "El ataque es super efectivo";
+			break;
+	}
+	return msg;
 }
 
 function obtAtk(move, offPoke) {
-	var atk = 1;
+	let atk = 1;
 	if (move.damage_class.name === "physical") {
 		atk = offPoke.stats.find((stat) => stat.stat.name === "attack").base_stat;
 	} else {
@@ -46,7 +61,7 @@ function obtAtk(move, offPoke) {
 }
 
 function obtDef(move, defPoke) {
-	var def = 1;
+	let def = 1;
 	if (move.damage_class.name === "physical") {
 		def = defPoke.stats.find((stat) => stat.stat.name === "defense").base_stat;
 	} else {
@@ -58,7 +73,7 @@ function obtDef(move, defPoke) {
 }
 
 function obtDecision(mana, salud, hp) {
-	var dec = 0;
+	let dec = 0;
 	if (mana < 15 || salud >= hp - 5) {
 		dec = Math.floor(Math.random() * 3);
 	} else {
@@ -68,7 +83,7 @@ function obtDecision(mana, salud, hp) {
 }
 
 function calculateFastest(pokeUser, pokeEnemy) {
-	var first = true;
+	let first = true;
 	const speedUser = pokeUser.stats.find(
 		(stat) => stat.stat.name === "speed"
 	).base_stat;
@@ -96,7 +111,8 @@ async function obtMoves(poke) {
 
 async function obtEnemyPokemon() {
 	const id = Math.floor(Math.random() * 386) + 1;
-	const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+	const id2 = 9;
+	const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id2}`);
 	const pokeEnemy = await response.json();
 	return pokeEnemy;
 }
@@ -108,4 +124,5 @@ export {
 	calculateFastest,
 	obtMoves,
 	obtEnemyPokemon,
+	relatedDamageMsg,
 };
