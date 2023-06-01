@@ -126,6 +126,13 @@
 
 <script>
 import "../styles/type.css";
+import {
+	calculateDebRes,
+	calculateDmg,
+	obtDecision,
+	calculateFastest,
+	obtMoves,
+} from "../functions/BattleFunctions.js";
 
 export default {
 	data() {
@@ -138,22 +145,19 @@ export default {
 			manaEnemigo: 100,
 			jugando: true,
 			mensaje: [],
-
 			pokemonUsuario: {},
 			pokemonEnemigo: {},
-
 			ataquesUsuario: [],
 			ataquesEnemigo: [],
-
 			primero: true,
 		};
 	},
 
 	created: async function () {
-		const response = await fetch(`https://pokeapi.co/api/v2/pokemon/1`);
+		const response = await fetch(`https://pokeapi.co/api/v2/pokemon/145`);
 		this.pokemonUsuario = await response.json();
 
-		const response2 = await fetch(`https://pokeapi.co/api/v2/pokemon/4`);
+		const response2 = await fetch(`https://pokeapi.co/api/v2/pokemon/101`);
 		this.pokemonEnemigo = await response2.json();
 
 		this.saludUsuario = this.hpUsuario = this.pokemonUsuario.stats.find(
@@ -163,40 +167,10 @@ export default {
 			(stat) => stat.stat.name === "hp"
 		).base_stat;
 
-		this.ataquesUsuario = this.pokemonUsuario.moves
-			.filter((move) => move.damage_class !== "status")
-			.slice(0, 3);
+		this.ataquesUsuario = await obtMoves(this.pokemonUsuario);
+		this.ataquesEnemigo = await obtMoves(this.pokemonEnemigo);
 
-		const movesWithDetailsUser = await Promise.all(
-			this.pokemonUsuario.moves.map((move) =>
-				fetch(move.move.url).then((response) => response.json())
-			)
-		);
-		movesWithDetailsUser.sort(() => Math.random() - 0.5);
-		this.ataquesUsuario = movesWithDetailsUser
-			.filter((move) => move.damage_class.name !== "status")
-			.slice(0, 3);
-
-		const movesWithDetailsEnemy = await Promise.all(
-			this.pokemonEnemigo.moves.map((move) =>
-				fetch(move.move.url).then((response) => response.json())
-			)
-		);
-		movesWithDetailsEnemy.sort(() => Math.random() - 0.5);
-		this.ataquesEnemigo = movesWithDetailsEnemy
-			.filter((move) => move.damage_class.name !== "status")
-			.slice(0, 3);
-
-		const speedUser = this.pokemonUsuario.stats.find(
-			(stat) => stat.stat.name === "speed"
-		).base_stat;
-		const speedEnemy = this.pokemonEnemigo.stats.find(
-			(stat) => stat.stat.name === "speed"
-		).base_stat;
-
-		if (speedEnemy > speedUser) {
-			this.primero = false;
-		}
+		this.primero = calculateFastest(this.pokemonUsuario, this.pokemonEnemigo);
 	},
 	methods: {
 		turno(move) {
@@ -219,43 +193,24 @@ export default {
 			}
 		},
 		enemigo() {
-			var decision;
-
-			if (this.manaEnemigo < 15 || this.saludEnemigo >= this.hpEnemigo - 5) {
-				decision = Math.floor(Math.random() * 3);
-			} else {
-				decision = Math.floor(Math.random() * 4);
-			}
-
+			const decision = obtDecision(
+				this.manaEnemigo,
+				this.saludEnemigo,
+				this.hpEnemigo
+			);
 			if (decision <= 2) {
 				const randomNumber = Math.floor(Math.random() * 100) + 1;
-				if (randomNumber <= this.ataquesEnemigo[decision].accuracy) {
-					var atk;
-					var def;
-					if (this.ataquesEnemigo[decision].damage_class.name === "physical") {
-						atk = this.pokemonEnemigo.stats.find(
-							(stat) => stat.stat.name === "attack"
-						).base_stat;
-						def = this.pokemonUsuario.stats.find(
-							(stat) => stat.stat.name === "defense"
-						).base_stat;
-					} else {
-						atk = this.pokemonEnemigo.stats.find(
-							(stat) => stat.stat.name === "special-attack"
-						).base_stat;
-						def = this.pokemonUsuario.stats.find(
-							(stat) => stat.stat.name === "special-defense"
-						).base_stat;
-					}
-
-					var daño =
-						Math.floor(
-							(5 * this.ataquesEnemigo[decision].power * (atk / def)) / 50
-						) + 1;
+				const move = this.ataquesEnemigo[decision];
+				if (randomNumber <= move.accuracy) {
+					const daño = calculateDmg(
+						move,
+						this.pokemonEnemigo,
+						this.pokemonUsuario
+					);
 					this.saludUsuario -= daño;
 					this.mostrarMensaje(
 						"El enemigo utilizo " +
-							this.ataquesEnemigo[decision].name +
+							move.name +
 							", y causo " +
 							daño +
 							" de daño",
@@ -263,49 +218,30 @@ export default {
 					);
 				} else {
 					this.mostrarMensaje(
-						"El enemigo utilizo " +
-							this.ataquesEnemigo[decision].name +
-							", y fallo",
+						"El enemigo utilizo " + move.name + ", y fallo",
 						"green-text"
 					);
 				}
 			} else {
 				this.manaEnemigo -= 15;
 				var curacion = Math.floor(Math.random() * 5) + 1 + 5;
-
 				if (curacion + this.saludEnemigo > this.hpEnemigo) {
 					this.saludEnemigo = this.hpEnemigo;
 				} else {
 					this.saludEnemigo += curacion;
 				}
-
 				this.mostrarMensaje("El enemigo se cura " + curacion, "amber-text");
 			}
-
 			this.batalla();
 		},
 		normal(move) {
 			const randomNumber = Math.floor(Math.random() * 100) + 1;
 			if (randomNumber <= move.accuracy) {
-				var atk;
-				var def;
-				if (move.damage_class.name === "physical") {
-					atk = this.pokemonUsuario.stats.find(
-						(stat) => stat.stat.name === "attack"
-					).base_stat;
-					def = this.pokemonEnemigo.stats.find(
-						(stat) => stat.stat.name === "defense"
-					).base_stat;
-				} else {
-					atk = this.pokemonUsuario.stats.find(
-						(stat) => stat.stat.name === "special-attack"
-					).base_stat;
-					def = this.pokemonEnemigo.stats.find(
-						(stat) => stat.stat.name === "special-defense"
-					).base_stat;
-				}
-
-				var daño = Math.floor((5 * move.power * (atk / def)) / 50) + 1;
+				const daño = calculateDmg(
+					move,
+					this.pokemonUsuario,
+					this.pokemonEnemigo
+				);
 				this.saludEnemigo -= daño;
 				this.mostrarMensaje(
 					"Utilizaste " + move.name + ", y causaste " + daño + " de daño",
@@ -317,24 +253,19 @@ export default {
 					"green-text"
 				);
 			}
-
 			this.batalla();
 		},
 		curar() {
 			this.manaUsuario -= 15;
 			var curacion = Math.floor(Math.random() * 5) + 1 + 5;
-
 			this.mostrarMensaje("Te curas " + curacion, "lime-text");
-
 			if (curacion + this.saludUsuario > 100) {
 				this.saludUsuario = 100;
 			} else {
 				this.saludUsuario += curacion;
 			}
-
 			this.enemigo();
 		},
-
 		rendirse() {
 			this.jugando = false;
 			this.mensaje = "Retirada";
@@ -360,7 +291,7 @@ export default {
 }
 .image {
 	padding-bottom: 5px;
-	margin-top: -12vh;
+	margin-top: -8vh;
 }
 .fondo {
 	background: url("https://images3.alphacoders.com/966/966315.png") center

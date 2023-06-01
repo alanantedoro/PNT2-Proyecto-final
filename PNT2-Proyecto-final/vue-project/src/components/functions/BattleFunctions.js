@@ -24,8 +24,8 @@ function calculateDebRes(moveType, types) {
 
 function calculateDmg(move, offPoke, defPoke) {
 	var dmg = 0;
-	const atk = this.obtAtk(move, offPoke);
-	const def = this.obtDef(move, defPoke);
+	const atk = obtAtk(move, offPoke);
+	const def = obtDef(move, defPoke);
 	dmg = Math.floor((5 * move.power * (atk / def)) / 50) + 1;
 	return dmg;
 }
@@ -53,3 +53,48 @@ function obtDef(move, defPoke) {
 	}
 	return def;
 }
+
+function obtDecision(mana, salud, hp) {
+	var dec = 0;
+	if (mana < 15 || salud >= hp - 5) {
+		dec = Math.floor(Math.random() * 3);
+	} else {
+		dec = Math.floor(Math.random() * 4);
+	}
+	return dec;
+}
+
+function calculateFastest(pokeUser, pokeEnemy) {
+	var first = true;
+	const speedUser = pokeUser.stats.find(
+		(stat) => stat.stat.name === "speed"
+	).base_stat;
+	const speedEnemy = pokeEnemy.stats.find(
+		(stat) => stat.stat.name === "speed"
+	).base_stat;
+	if (speedEnemy > speedUser) {
+		first = false;
+	}
+	return first;
+}
+
+async function obtMoves(poke) {
+	const movesWithDetails = await Promise.all(
+		poke.moves.map((move) =>
+			fetch(move.move.url).then((response) => response.json())
+		)
+	);
+	movesWithDetails.sort(() => Math.random() - 0.5);
+	const moves = movesWithDetails
+		.filter((move) => move.damage_class.name !== "status")
+		.slice(0, 3);
+	return moves;
+}
+
+export {
+	calculateDebRes,
+	calculateDmg,
+	obtDecision,
+	calculateFastest,
+	obtMoves,
+};
