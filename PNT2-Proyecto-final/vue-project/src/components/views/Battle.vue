@@ -1,4 +1,5 @@
 <template>
+	<audio ref="battleSong" src="/sounds/battle.mp3"></audio>
 	<div class="fondo">
 		<div class="row" v-if="jugando">
 			<div class="container">
@@ -12,7 +13,17 @@
 				</div>
 
 				<!-- USUARIO -->
-				<div class="card col m5 brown lighten-1 quitar-padding-lateral">
+				<div
+					:class="[
+						'card',
+						'col',
+						'm5',
+						'brown',
+						'lighten-1',
+						'quitar-padding-lateral',
+						{ damaged: userRecibeDmg },
+					]"
+				>
 					<h1 style="text-align: center">
 						{{
 							pokemonUsuario.name?.charAt(0).toUpperCase() +
@@ -81,7 +92,16 @@
 				</div>
 				<!-- ENEMIGO -->
 				<div
-					class="card col offset-m2 m5 brown lighten-1 quitar-padding-lateral"
+					:class="[
+						'card',
+						'col',
+						'm5',
+						'brown',
+						'offset-m2',
+						'lighten-1',
+						'quitar-padding-lateral',
+						{ damaged: enemyRecibeDmg },
+					]"
 				>
 					<h1 style="text-align: center">
 						{{
@@ -119,12 +139,16 @@
 				</div>
 			</div>
 		</div>
-
 		<div v-else class="center-align">
-			<a href="#" class="yellow-text mensaje-final" @click="reinciar">
-				¡{{ mensaje }}!
-				<h6 class="yellow-text">Click para volver a intentar</h6>
-			</a>
+			<div v-if="inicio">
+				<a @click="empezar"><h1>START</h1></a>
+			</div>
+			<div v-else>
+				<a href="#" class="yellow-text mensaje-final" @click="reinciar">
+					¡{{ mensaje }}!
+					<h6 class="yellow-text">Click para volver a intentar</h6>
+				</a>
+			</div>
 		</div>
 	</div>
 </template>
@@ -151,7 +175,7 @@ export default {
 			manaUsuario: 100,
 			saludEnemigo: 0,
 			manaEnemigo: 100,
-			jugando: true,
+			jugando: false,
 			mensaje: [],
 			pokemonUsuario: {},
 			pokemonEnemigo: {},
@@ -159,6 +183,9 @@ export default {
 			ataquesEnemigo: [],
 			primero: true,
 			visible: true,
+			userRecibeDmg: false,
+			enemyRecibeDmg: false,
+			inicio: true,
 		};
 	},
 
@@ -180,31 +207,40 @@ export default {
 		this.primero = calculateFastest(this.pokemonUsuario, this.pokemonEnemigo);
 	},
 	methods: {
+		empezar() {
+			this.jugando = true;
+			this.inicio = false;
+			this.$refs.battleSong.play();
+		},
 		turno(move) {
 			this.visible = false;
 			if (this.primero) {
 				this.normal(move);
-				setTimeout(() => {
-					this.enemigo();
-					this.visible = true;
-				}, 1000);
+				if (this.jugando) {
+					setTimeout(() => {
+						this.enemigo();
+						this.visible = true;
+					}, 1000);
+				}
 			} else {
 				this.enemigo();
-				setTimeout(() => {
-					this.normal(move);
-					this.visible = true;
-				}, 1000);
+				if (this.jugando) {
+					setTimeout(() => {
+						this.normal(move);
+						this.visible = true;
+					}, 1000);
+				}
 			}
 		},
 		batalla() {
-			if (this.jugando) {
-				if (this.saludUsuario <= 0) {
-					this.jugando = false;
-					this.mensaje = "Derrota";
-				} else if (this.saludEnemigo <= 0) {
-					this.jugando = false;
-					this.mensaje = "Victoria";
-				}
+			if (this.saludUsuario <= 0) {
+				this.jugando = false;
+				this.mensaje = "Derrota";
+				this.$refs.battleSong.pause();
+			} else if (this.saludEnemigo <= 0) {
+				this.jugando = false;
+				this.mensaje = "Victoria";
+				this.$refs.battleSong.pause();
 			}
 		},
 		async enemigo() {
@@ -230,6 +266,12 @@ export default {
 					const msg = relatedDamageMsg(indice);
 					if (msg !== "") {
 						this.mostrarMensaje(msg, "");
+					}
+					if (dmg > 0) {
+						this.userRecibeDmg = true;
+						setTimeout(() => {
+							this.userRecibeDmg = false;
+						}, 1000);
 					}
 				} else {
 					this.mostrarMensaje(
@@ -265,6 +307,12 @@ export default {
 				const msg = relatedDamageMsg(indice);
 				if (msg !== "") {
 					this.mostrarMensaje(msg, "");
+				}
+				if (dmg > 0) {
+					this.enemyRecibeDmg = true;
+					setTimeout(() => {
+						this.enemyRecibeDmg = false;
+					}, 1000);
 				}
 			} else {
 				this.mostrarMensaje(
@@ -392,5 +440,22 @@ export default {
 
 .disabled-pointer {
 	pointer-events: none;
+}
+
+.damaged {
+	/* Estilos para el impacto visual */
+	animation: flash 1s;
+}
+
+@keyframes flash {
+	0%,
+	50%,
+	100% {
+		background-color: transparent;
+	}
+	25%,
+	75% {
+		background-color: rgba(255, 0, 0, 0.5);
+	}
 }
 </style>
