@@ -44,12 +44,15 @@ provide("userObject", userObject);
 						<RouterLink to="/Pokemons" class="link-navbar">Pokemons</RouterLink>
 					</li>
 					<li class="nav-item">
-						<RouterLink to="/Battle" class="link-navbar"
-						v-if="userObject">Play</RouterLink>
-					</li>
-					<li class="nav-item">
-						<RouterLink to="/Login" class="link-navbar"
-						v-if="userObject === null">Play</RouterLink>
+						<RouterLink to="/Battle" class="link-navbar" v-if="userObject"
+							>Play</RouterLink
+						>
+						<RouterLink
+							to="/Login"
+							class="link-navbar"
+							v-if="userObject === null"
+							>Play</RouterLink
+						>
 					</li>
 				</ul>
 				<ul class="navbar-nav nav-items-right">
