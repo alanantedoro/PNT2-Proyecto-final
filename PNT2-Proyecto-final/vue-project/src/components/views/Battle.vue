@@ -1,5 +1,5 @@
 <template>
-	<audio ref="battleSong" src="/sounds/battle.mp3"></audio>
+	<!--<audio ref="battleSong" src="/sounds/battle.mp3"></audio>-->
 	<div class="fondo">
 		<div class="row" v-if="jugando">
 			<div class="container">
@@ -190,7 +190,7 @@ export default {
 	},
 
 	created: async function () {
-		const response = await fetch(`https://pokeapi.co/api/v2/pokemon/134`);
+		const response = await fetch(`https://pokeapi.co/api/v2/pokemon/547`);
 		this.pokemonUsuario = await response.json();
 		this.pokemonEnemigo = await obtEnemyPokemon();
 

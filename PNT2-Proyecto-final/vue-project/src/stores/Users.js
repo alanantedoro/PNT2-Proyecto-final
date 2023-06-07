@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { onMounted } from "vue";
+import axios from "axios";
 
 export const usuariosStore = defineStore("usuarios", {
 	state: () => ({
@@ -7,29 +7,30 @@ export const usuariosStore = defineStore("usuarios", {
 		password: "",
 	}),
 	actions: {
-		login() {
-			const url = new URL("https://645ae5fd65bd868e93266759.mockapi.io/users");
-			url.searchParams.append("password", this.password); //https://PROJECT_TOKEN.mockapi.io/tasks?completed=false
-			url.searchParams.append("user", this.username);
+		async login() {
+			let headers = new Headers();
+			headers.append("Content-Type", "application/json");
+			headers.append("Accept", "application/json");
 
-			return fetch(url, {
-				method: "GET",
-				headers: { "content-type": "application/json" },
-			}).then((response) => {
-				return response
-					.json()
-					.then((data) => {
-						console.log(data);
+			headers.append("Access-Control-Allow-Origin", "http://localhost:5173");
+			headers.append("Access-Control-Allow-Credentials", "true");
 
-						if (data.length == 0) this.mensaje = "El usuario no se encontró";
-						else this.mensaje = data[0].id;
-
-						return data;
-					})
-					.catch((err) => {
-						console.log(err);
-					});
-			});
+			headers.append("GET", "POST", "OPTIONS");
+			return axios
+				.post("http://localhost:8080/users/login", {
+					// Aquí puedes incluir los datos que deseas enviar en el cuerpo de la solicitud
+					credentials: "include",
+					method: "POST",
+					headers: headers,
+					user: this.username,
+					pass: this.password,
+				})
+				.then((response) => {
+					return response.data;
+				})
+				.catch((error) => {
+					console.error(error); // Aquí puedes manejar cualquier error ocurrido durante la solicitud
+				});
 		},
 
 		logout() {
