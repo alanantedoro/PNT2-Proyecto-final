@@ -15,7 +15,7 @@ export default {
 
 		const redirectToAnotherView = () => {
 			// Redirigir a otra vista
-			router.push("/");
+			router.push("/login");
 		};
 
 		return {
@@ -23,19 +23,19 @@ export default {
 		};
 	},
 	methods: {
-		async loginVue() {
+		async signup() {
 			const userStore = usuariosStore();
 			userStore.username = this.username;
 			userStore.password = this.password;
 
 			try {
-				const data = await userStore.login(); // Llamada al método "login" de usuariosStore
-				if (data.length > 0) {
+				const data = await userStore.signup(); // Llamada al método "login" de usuariosStore
+				if (data.created) {
 					// Guardar el objeto en la Session Storage
 					sessionStorage.setItem("userObject", JSON.stringify(data[0]));
 					this.redirectToAnotherView();
 				} else {
-					this.mensaje = "El usuario no se encontró";
+					this.mensaje = "El usuario no se pudo crear" + data.message;
 				}
 			} catch (error) {
 				console.error(error);
@@ -87,7 +87,7 @@ export default {
 									<button
 										class="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3"
 										type="button"
-										@click="loginVue()"
+										@click="signup()"
 									>
 										Sign up
 									</button>

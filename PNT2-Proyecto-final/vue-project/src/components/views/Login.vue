@@ -106,7 +106,7 @@ export default {
 			console.log(data);
 			if (data.encontro) {
 				// Guardar el objeto en la Session Storage
-				sessionStorage.setItem("userObject", JSON.stringify(data));
+				sessionStorage.setItem("userObject", JSON.stringify(data.existingUser));
 				this.redirectToAnotherView();
 				this.mensaje = "kjkjdsah";
 			} else {

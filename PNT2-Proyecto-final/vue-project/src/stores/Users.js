@@ -22,8 +22,8 @@ export const usuariosStore = defineStore("usuarios", {
 					credentials: "include",
 					method: "POST",
 					headers: headers,
-					user: this.username,
-					pass: this.password,
+					username: this.username,
+					password: this.password,
 				})
 				.then((response) => {
 					return response.data;
@@ -53,5 +53,32 @@ export const usuariosStore = defineStore("usuarios", {
 					});
 			});
 		},
+		signup(){
+			let headers = new Headers();
+			headers.append("Content-Type", "application/json");
+			headers.append("Accept", "application/json");
+
+			headers.append("Access-Control-Allow-Origin", "http://localhost:5173");
+			headers.append("Access-Control-Allow-Credentials", "true");
+
+			headers.append("GET", "POST", "OPTIONS");
+			return axios
+				.post("http://localhost:8080/users/", {
+					// Aquí puedes incluir los datos que deseas enviar en el cuerpo de la solicitud
+					credentials: "include",
+					method: "POST",
+					headers: headers,
+					username: this.username,
+					password: this.password,
+					pokedex: "",
+					
+				})
+				.then((response) => {
+					return response.data;
+				})
+				.catch((error) => {
+					console.error(error); // Aquí puedes manejar cualquier error ocurrido durante la solicitud
+				});
+		}
 	},
 });
