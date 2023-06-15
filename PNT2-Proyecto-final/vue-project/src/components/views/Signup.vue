@@ -29,16 +29,16 @@ export default {
 			userStore.password = this.password;
 
 			try {
-				const data = await userStore.signup(); // Llamada al método "login" de usuariosStore
-				if (data.created) {
-					// Guardar el objeto en la Session Storage
-					sessionStorage.setItem("userObject", JSON.stringify(data[0]));
+				const data = await userStore.signup();
+				if (data) {
 					this.redirectToAnotherView();
 				} else {
-					this.mensaje = "El usuario no se pudo crear" + data.message;
+					//this.mensaje = "El usuario no se pudo crear" + data.message;
+					throw new Error("El usuario no se pudo crear");
 				}
 			} catch (error) {
-				console.error(error);
+				//console.error(error);
+				this.mensaje = error.message;
 			}
 		},
 	},
@@ -57,6 +57,7 @@ export default {
 							</div>
 							<form>
 								<div class="form-outline mb-4">
+									{{ this.mensaje }}
 									<input
 										type="email"
 										id="form2Example11"

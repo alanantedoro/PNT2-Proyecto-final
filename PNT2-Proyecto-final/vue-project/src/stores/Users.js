@@ -53,7 +53,7 @@ export const usuariosStore = defineStore("usuarios", {
 					});
 			});
 		},
-		signup(){
+		async signup() {
 			let headers = new Headers();
 			headers.append("Content-Type", "application/json");
 			headers.append("Accept", "application/json");
@@ -71,14 +71,13 @@ export const usuariosStore = defineStore("usuarios", {
 					username: this.username,
 					password: this.password,
 					pokedex: "",
-					
 				})
 				.then((response) => {
 					return response.data;
 				})
 				.catch((error) => {
-					console.error(error); // Aquí puedes manejar cualquier error ocurrido durante la solicitud
+					//console.error(error); // Aquí puedes manejar cualquier error ocurrido durante la solicitud
 				});
-		}
+		},
 	},
 });

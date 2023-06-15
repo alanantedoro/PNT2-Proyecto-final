@@ -14,6 +14,9 @@ function logout() {
 onMounted(() => {
 	const storedUserObject = window.sessionStorage.getItem("userObject");
 	if (storedUserObject) {
+		// userObject.value = storedUserObject
+		// 	? JSON.parse(storedUserObject)
+		// 	: undefined;
 		userObject.value = JSON.parse(storedUserObject);
 	}
 });
