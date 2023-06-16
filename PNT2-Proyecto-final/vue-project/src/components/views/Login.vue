@@ -99,11 +99,11 @@ export default {
 				const data = await userStore.login(); // Llamada al método "login" de usuariosStore
 				this.processData(data);
 			} catch (error) {
-				console.error(error);
+				//console.error(error);
 			}
 		},
 		async processData(data) {
-			console.log(data);
+			//console.log(data);
 			if (data.encontro) {
 				// Guardar el objeto en la Session Storage
 				sessionStorage.setItem("userObject", JSON.stringify(data.existingUser));
