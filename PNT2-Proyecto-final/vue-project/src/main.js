@@ -1,7 +1,8 @@
-import { createApp } from "vue";
-import { createPinia } from "pinia";
+import { createApp, ref } from "vue";
+import { createPinia, storeToRefs } from "pinia";
 import { createRouter, createWebHistory } from "vue-router";
 import VueLazyload from "vue-lazyload";
+import { useLoginStatusStore } from "./stores/State.js";
 
 import "./assets/main.css";
 
@@ -15,6 +16,8 @@ import Signup from "./components/views/signup.vue";
 import Terms from "./components/views/Terms.vue";
 import Profile from "./components/views/Profile.vue";
 import Battle from "./components/views/Battle.vue";
+import SelectFirstPokemon from "./components/views/SelectFirstPokemon.vue";
+import Error from "./components/views/Error.vue";
 
 import MonomaniacOneRegular from "@/fonts/MonomaniacOne-Regular.ttf";
 
@@ -30,15 +33,25 @@ fontStyles.textContent = `
 `;
 document.head.appendChild(fontStyles);
 
+// Ahora mismo la app utiliza auth y comprueba la sesion pero si se quiere hardcodear una ruta se deslogea y pierde el state./
+// Falta armar la vista de Profile para ABM y la de SelectFirstPokemon
 const routes = [
-	{ path: "/", component: Index },
+	{ path: "/", component: Index},
 	{ path: "/Pokemons", component: Pokemons },
 	{ path: "/Pokemon/:id", component: Pokemon },
 	{ path: "/login", component: Login },
 	{ path: "/signup", component: Signup },
 	{ path: "/Terms", component: Terms },
-	{ path: "/Profile", component: Profile },
-	{ path: "/Battle", component: Battle },
+	{ path: "/Profile", component: Profile,  meta:{
+		requiresAuth: 'true',
+	  }},
+	{ path: "/Battle", component: Battle, meta:{
+		requiresAuth: 'true',
+	  }},
+	{ path: "/SelectFirstPokemon", component: SelectFirstPokemon, meta:{
+		requiresAuth: 'true',
+	  }},
+	  { path: "/Error", component: Error},
 ];
 
 const router = createRouter({
@@ -48,3 +61,27 @@ const router = createRouter({
 const pinia = createPinia();
 
 createApp(App).use(pinia).use(router).use(VueLazyload).mount("#app");
+
+
+const loginStatusStore = useLoginStatusStore()
+const { isLoggedIn } = storeToRefs(loginStatusStore)
+
+console.log("isLoggedIn", loginStatusStore.isLoggedIn)
+
+
+// Comprueba si el componente necesita login.
+router.beforeEach((to, from, next) => {
+	const storedLogin = window.sessionStorage.getItem("loginCheck");
+	if (to.meta.requiresAuth) {
+	  console.log("Router", storedLogin)
+	  if (!storedLogin) {
+		next({
+		  path: '/Error'
+		})
+	  } else {
+		next()
+	  }
+	} else {
+	  next()
+	}
+  })

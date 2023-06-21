@@ -103,8 +103,8 @@ export default {
 			}
 		},
 		async processData(data) {
-			//console.log(data);
-			if (data.encontro) {
+			console.log(data);
+			if (data) {
 				// Guardar el objeto en la Session Storage
 				sessionStorage.setItem("userObject", JSON.stringify(data.existingUser));
 				this.redirectToAnotherView();

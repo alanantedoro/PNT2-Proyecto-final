@@ -1,13 +1,17 @@
 import { defineStore } from "pinia";
 import axios from "axios";
+import { useLoginStatusStore } from "./State.js";
 
 export const usuariosStore = defineStore("usuarios", {
 	state: () => ({
+		userID: null,
 		username: "",
 		password: "",
 	}),
 	actions: {
 		async login() {
+			const stateStore = useLoginStatusStore();
+
 			let headers = new Headers();
 			headers.append("Content-Type", "application/json");
 			headers.append("Accept", "application/json");
@@ -18,22 +22,26 @@ export const usuariosStore = defineStore("usuarios", {
 			headers.append("GET", "POST", "OPTIONS");
 			return axios
 				.post("http://localhost:8080/users/login", {
-					// Aquí puedes incluir los datos que deseas enviar en el cuerpo de la solicitud
 					credentials: "include",
 					method: "POST",
 					headers: headers,
+					id: this.id,
 					username: this.username,
 					password: this.password,
 				})
 				.then((response) => {
+					stateStore.logIn();
+					console.log(response.data);
 					return response.data;
 				})
 				.catch((error) => {
-					console.error(error); // Aquí puedes manejar cualquier error ocurrido durante la solicitud
+					console.error(error);
 				});
 		},
 
 		logout() {
+			const stateStore = useLoginStatusStore();
+			stateStore.logOut();
 			sessionStorage.setItem("userObject", null);
 		},
 		buscar() {
@@ -53,7 +61,7 @@ export const usuariosStore = defineStore("usuarios", {
 					});
 			});
 		},
-		async signup() {
+		async signup() {	
 			let headers = new Headers();
 			headers.append("Content-Type", "application/json");
 			headers.append("Accept", "application/json");
@@ -79,5 +87,22 @@ export const usuariosStore = defineStore("usuarios", {
 					//console.error(error); // Aquí puedes manejar cualquier error ocurrido durante la solicitud
 				});
 		},
+
+		async update(updatedFields){			
+			  try {
+				const response = await axios.put(`http://localhost:8080/users/${this.userID}`, updatedFields)
+				// 	credentials: "include",
+				// 	method: "PUT",
+				// 	headers: headers,
+				// 	username: this.username,
+				// 	password: this.password,
+			  	// });
+
+				console.log("Usuario actualizado exitosamente");
+				console.log(response.data);
+			  } catch (error) {
+				console.error("Error al actualizar el usuario:", error);
+			  }
+		}
 	},
 });
