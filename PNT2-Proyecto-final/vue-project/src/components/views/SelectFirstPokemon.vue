@@ -1,5 +1,6 @@
 <script>
 import { usuariosStore } from "../../stores/Users.js";
+import { inject } from "vue";
 
 export default {
 	data() {
@@ -10,7 +11,6 @@ export default {
 	},
 	created: async function () {
 		const pokeIds = [1, 4, 7];
-		const results = [];
 		for (const id of pokeIds) {
 			const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
 			this.pokemons.push(await response.json());
@@ -24,17 +24,31 @@ export default {
 			event.target.src = this.placeholderImage;
 		},
 		async agregarPokemon(id) {
+			let userObject = inject("userObject");
 			const userStore = usuariosStore();
-			const { userID } = storeToRefs(userStore);
+			const storedUserObject = window.sessionStorage.getItem("userObject");
+			if (storedUserObject) {
+				userObject = JSON.parse(storedUserObject);
+			}
+			const userID = userObject.id;
 			const updatedFields = {
-				pokedex: id,
+				pokedex: id.toString(),
 			};
-
+			const a = {
+				updatedFields: updatedFields,
+			};
+			console.log(a);
 			try {
 				console.log(userID);
 				console.log(updatedFields);
-				const data = await userStore.update(userID, updatedFields);
-				this.processData(data);
+				const data = await userStore.update(userID, a);
+				if (data) {
+					userObject.pokedex = id.toString();
+					window.sessionStorage.setItem(
+						"userObject",
+						JSON.stringify(userObject)
+					);
+				}
 			} catch (error) {
 				console.error(error);
 			}

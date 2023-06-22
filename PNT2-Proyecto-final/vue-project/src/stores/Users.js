@@ -87,21 +87,13 @@ export const usuariosStore = defineStore("usuarios", {
 				});
 		},
 
-		async update(updatedFields) {
+		async update(id, updatedFields) {
 			try {
 				const response = await axios.put(
-					`http://localhost:8080/users/${this.userID}`,
+					`http://localhost:8080/users/${id}`,
 					updatedFields
 				);
-				// 	credentials: "include",
-				// 	method: "PUT",
-				// 	headers: headers,
-				// 	username: this.username,
-				// 	password: this.password,
-				// });
-
-				console.log("Usuario actualizado exitosamente");
-				console.log(response.data);
+				return true;
 			} catch (error) {
 				console.error("Error al actualizar el usuario:", error);
 			}
