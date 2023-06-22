@@ -1,151 +1,101 @@
 <script>
-import "../styles/type.css";
+import { usuariosStore } from "../../stores/Users.js";
+
 export default {
 	data() {
 		return {
-			pokemon: {},
-			text: "",
+			pokemons: [],
+			placeholderImage: "/favicon.png",
 		};
 	},
 	created: async function () {
-		const id = this.$route.params.id;
-		const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
-		this.pokemon = await response.json();
-		const response2 = await fetch(
-			`https://pokeapi.co/api/v2/pokemon-species/${id}`
-		);
-		const specie = await response2.json();
-		// Filtrar los textos de especie en inglés
-		const englishTexts = specie.flavor_text_entries.filter(
-			(entry) => entry.language.name === "en"
-		);
-
-		// Obtener el primer texto en inglés
-		if (englishTexts.length > 0) {
-			// Generar un índice aleatorio dentro del rango de los textos disponibles
-			const randomIndex = Math.floor(Math.random() * englishTexts.length);
-
-			// Obtener el texto aleatorio en inglés
-			this.text = englishTexts[randomIndex].flavor_text;
-		} else {
-			this.text = "No English description available.";
+		const pokeIds = [1, 4, 7];
+		const results = [];
+		for (const id of pokeIds) {
+			const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+			this.pokemons.push(await response.json());
 		}
+		console.log(this.pokemons);
+
+		this.pokemons.sort((a, b) => a.id - b.id);
+	},
+	methods: {
+		handleImageError(event) {
+			event.target.src = this.placeholderImage;
+		},
+		async agregarPokemon(id) {
+			const userStore = usuariosStore();
+			const { userID } = storeToRefs(userStore);
+			const updatedFields = {
+				pokedex: id,
+			};
+
+			try {
+				console.log(userID);
+				console.log(updatedFields);
+				const data = await userStore.update(userID, updatedFields);
+				this.processData(data);
+			} catch (error) {
+				console.error(error);
+			}
+		},
 	},
 };
 </script>
 <template>
 	<div class="back">
-		<div class="container">
-			<div class="pokemon-card">
-				<br />
-				<div class="title">
-					<h1>
-						#{{ pokemon.id }} <br />
-						{{ pokemon.name?.charAt(0).toUpperCase() + pokemon.name?.slice(1) }}
-					</h1>
-				</div>
-				<img
-					:src="pokemon.sprites?.front_default"
-					alt="Pokemon Image"
-					class="image"
-				/>
-				<div class="types-container">
-					<div
-						v-for="(type, index) in pokemon.types"
-						:key="index"
-						:class="['type', type.type.name]"
-					>
-						<p>{{ type.type.name }}</p>
-					</div>
-				</div>
-				<div class="stats">
-					<div class="stat">Height: {{ pokemon.height / 10 }}m</div>
-					<div class="stat">Weight: {{ pokemon.weight / 10 }}kg</div>
-					<div v-for="(stat, index) in pokemon.stats" :key="index">
-						<div class="stat">{{ stat.stat.name }}: {{ stat.base_stat }}</div>
-					</div>
-				</div>
-			</div>
-			<div>
-				<div :class="['text-container', pokemon.types?.[0]?.type?.name]">
-					<div class="text">
-						{{ this.text }}
-					</div>
+		<div class="title">
+			<h1>Pokemons</h1>
+		</div>
+		<div class="card-group">
+			<div v-for="(item, index) in pokemons">
+				<div class="card pokemon-card">
+					<router-link :to="'/'" @click="agregarPokemon(item.id)">
+						<div class="card-body">
+							<h6 class="card-title">#{{ item.id }}</h6>
+							<h5 class="card-title">{{ item.name }}</h5>
+							<img
+								:src="item.sprites.front_default"
+								class="card-img-top"
+								alt="Pokemon Image"
+								loading="lazy"
+								@error="handleImageError"
+							/>
+						</div>
+					</router-link>
 				</div>
 			</div>
 		</div>
 	</div>
 </template>
 <style scoped>
-.title {
-	text-shadow: #000000 1px 0 2px;
-}
-
-.text-container {
-	margin-left: 15px;
-	max-width: 20rem;
-	display: flex !important;
-	justify-content: center !important; /* Centra horizontalmente en la pantalla */
-	align-items: center; /* Centra verticalmente en la pantalla */
-	border-radius: 15px;
-	border: #332e30;
-	border-style: double;
-}
-
-.text {
-	text-align: center !important;
-	padding: 15px;
-}
-
-.back {
-	display: flex;
-	justify-content: center; /* Centra horizontalmente en la pantalla */
-	align-items: center; /* Centra verticalmente en la pantalla */
-}
-
-.container {
-	display: flex;
-	justify-content: center; /* Centra horizontalmente */
-	align-items: center;
-	color: white;
-}
-
 .pokemon-card {
-	width: 15rem;
-	background-color: whitesmoke;
-	border-radius: 2rem;
 	text-align: center;
+	width: 10rem;
+	margin-top: 10px;
+	margin-left: 4px;
+	margin-right: 4px;
+	border-radius: 2rem;
+}
+
+.pokemon-card:hover {
+	transform: scale(1.05);
+	text-shadow: rgb(0, 0, 0) 1px 0 8px;
+	box-shadow: rgb(0, 0, 0) 1px 0 8px;
 }
 
 .title {
 	color: black;
+	margin-left: 10px;
+	font-family: "MonomaniacOneRegular", sans-serif;
 }
-
-.image {
-	height: auto;
-	width: auto;
-}
-.stats {
-	margin-top: 15px;
-	color: black;
-	text-align: left !important;
-	padding-left: 1rem;
-	padding-bottom: 10px;
-}
-
-.stat {
-	margin-bottom: 5px;
-}
-.types-container {
+.card-group {
 	display: flex;
-	justify-content: center; /* Centra horizontalmente */
+	justify-content: center;
+	align-items: center;
 }
 
-.type {
-	margin-right: 10px;
-	height: 1.8em;
-	width: 4em;
-	text-align: center;
-	border-radius: 15px;
+.card-title {
+	color: black;
 }
 </style>

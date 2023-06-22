@@ -31,11 +31,10 @@ export const usuariosStore = defineStore("usuarios", {
 				})
 				.then((response) => {
 					stateStore.logIn();
-					console.log(response.data);
 					return response.data;
 				})
 				.catch((error) => {
-					console.error(error);
+					return error.response.data.message;
 				});
 		},
 
@@ -61,7 +60,7 @@ export const usuariosStore = defineStore("usuarios", {
 					});
 			});
 		},
-		async signup() {	
+		async signup() {
 			let headers = new Headers();
 			headers.append("Content-Type", "application/json");
 			headers.append("Accept", "application/json");
@@ -88,21 +87,24 @@ export const usuariosStore = defineStore("usuarios", {
 				});
 		},
 
-		async update(updatedFields){			
-			  try {
-				const response = await axios.put(`http://localhost:8080/users/${this.userID}`, updatedFields)
+		async update(updatedFields) {
+			try {
+				const response = await axios.put(
+					`http://localhost:8080/users/${this.userID}`,
+					updatedFields
+				);
 				// 	credentials: "include",
 				// 	method: "PUT",
 				// 	headers: headers,
 				// 	username: this.username,
 				// 	password: this.password,
-			  	// });
+				// });
 
 				console.log("Usuario actualizado exitosamente");
 				console.log(response.data);
-			  } catch (error) {
+			} catch (error) {
 				console.error("Error al actualizar el usuario:", error);
-			  }
-		}
+			}
+		},
 	},
 });

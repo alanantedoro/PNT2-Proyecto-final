@@ -80,9 +80,12 @@ export default {
 	setup() {
 		const router = useRouter();
 
-		const redirectToAnotherView = () => {
-			// Redirigir a otra vista
-			router.push("/");
+		const redirectToAnotherView = (pokedex) => {
+			if (pokedex === "") {
+				router.push("/SelectFirstPokemon");
+			} else {
+				router.push("/");
+			}
 		};
 
 		return {
@@ -98,19 +101,15 @@ export default {
 			try {
 				const data = await userStore.login(); // Llamada al método "login" de usuariosStore
 				this.processData(data);
-			} catch (error) {
-				//console.error(error);
-			}
+			} catch (error) {}
 		},
 		async processData(data) {
-			console.log(data);
-			if (data) {
+			if (data.existingUser) {
 				// Guardar el objeto en la Session Storage
 				sessionStorage.setItem("userObject", JSON.stringify(data.existingUser));
-				this.redirectToAnotherView();
-				this.mensaje = "kjkjdsah";
+				this.redirectToAnotherView(data.existingUser.pokedex);
 			} else {
-				this.mensaje = "El usuario no se encontró";
+				this.mensaje = data;
 			}
 		},
 	},
