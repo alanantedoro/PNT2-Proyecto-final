@@ -194,8 +194,13 @@ export default {
 	},
 
 	created: async function () {
-		// Aca en este fetch deberiamos pegarle a nuestra api trayendo la pokedex para hacer la seleccion.
-		const response = await fetch(`https://pokeapi.co/api/v2/pokemon/547`);
+		const activePokemon = window.sessionStorage.getItem("activePokemon");
+		if (!activePokemon) {
+			router.push("/SelectActivePokemon");
+		}
+		const response = await fetch(
+			`https://pokeapi.co/api/v2/pokemon/${activePokemon}`
+		);
 		this.pokemonUsuario = await response.json();
 		this.pokemonEnemigo = await obtEnemyPokemon();
 
@@ -212,6 +217,34 @@ export default {
 		this.primero = calculateFastest(this.pokemonUsuario, this.pokemonEnemigo);
 	},
 	methods: {
+		async actualizarPokedex() {
+			let userObject = {};
+			const userStore = usuariosStore();
+			const storedUserObject = window.sessionStorage.getItem("userObject");
+			if (storedUserObject) {
+				userObject = JSON.parse(storedUserObject);
+				const userID = userObject.id;
+				const pokedex =
+					userObject.pokedex + "," + this.pokemonEnemigo.id.toString();
+				const updatedFields = {
+					updatedFields: {
+						pokedex: pokedex,
+					},
+				};
+				try {
+					const data = await userStore.update(userID, updatedFields);
+					if (data) {
+						userObject.pokedex = pokedex;
+						window.sessionStorage.setItem(
+							"userObject",
+							JSON.stringify(userObject)
+						);
+					}
+				} catch (error) {
+					console.error(error);
+				}
+			}
+		},
 		empezar() {
 			this.jugando = true;
 			this.inicio = false;
@@ -250,6 +283,7 @@ export default {
 					this.mensaje = "Victoria";
 					this.winner = true;
 					this.registerBattle();
+					this.actualizarPokedex();
 					//this.$refs.battleSong.pause();
 				}
 			}
