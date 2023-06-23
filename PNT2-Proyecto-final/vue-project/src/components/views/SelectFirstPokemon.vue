@@ -15,8 +15,6 @@ export default {
 			const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
 			this.pokemons.push(await response.json());
 		}
-		console.log(this.pokemons);
-
 		this.pokemons.sort((a, b) => a.id - b.id);
 	},
 	methods: {
@@ -24,7 +22,7 @@ export default {
 			event.target.src = this.placeholderImage;
 		},
 		async agregarPokemon(id) {
-			let userObject = inject("userObject");
+			let userObject = {};
 			const userStore = usuariosStore();
 			const storedUserObject = window.sessionStorage.getItem("userObject");
 			if (storedUserObject) {
@@ -32,16 +30,12 @@ export default {
 			}
 			const userID = userObject.id;
 			const updatedFields = {
-				pokedex: id.toString(),
+				updatedFields: {
+					pokedex: id.toString(),
+				},
 			};
-			const a = {
-				updatedFields: updatedFields,
-			};
-			console.log(a);
 			try {
-				console.log(userID);
-				console.log(updatedFields);
-				const data = await userStore.update(userID, a);
+				const data = await userStore.update(userID, updatedFields);
 				if (data) {
 					userObject.pokedex = id.toString();
 					window.sessionStorage.setItem(

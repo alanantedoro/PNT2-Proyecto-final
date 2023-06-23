@@ -169,7 +169,6 @@ import { battleStore } from "../../stores/Battle.js";
 import { usuariosStore } from "../../stores/Users.js";
 import { inject } from "vue";
 
-
 export default {
 	data() {
 		return {
@@ -216,7 +215,7 @@ export default {
 		empezar() {
 			this.jugando = true;
 			this.inicio = false;
-			this.$refs.battleSong.play();
+			//this.$refs.battleSong.play();
 		},
 		turno(move) {
 			this.visible = false;
@@ -239,18 +238,20 @@ export default {
 			}
 		},
 		batalla() {
-			if (this.saludUsuario <= 0) {
-				this.jugando = false;
-				this.mensaje = "Derrota";
-				this.winner = false;
-				this.registerBattle();
-				this.$refs.battleSong.pause();
-			} else if (this.saludEnemigo <= 0) {
-				this.jugando = false;
-				this.mensaje = "Victoria";
-				this.winner = true;
-				this.registerBattle();
-				this.$refs.battleSong.pause();
+			if (this.jugando) {
+				if (this.saludUsuario <= 0) {
+					this.jugando = false;
+					this.mensaje = "Derrota";
+					this.winner = false;
+					this.registerBattle();
+					//this.$refs.battleSong.pause();
+				} else if (this.saludEnemigo <= 0) {
+					this.jugando = false;
+					this.mensaje = "Victoria";
+					this.winner = true;
+					this.registerBattle();
+					//this.$refs.battleSong.pause();
+				}
 			}
 		},
 		async enemigo() {
@@ -365,20 +366,20 @@ export default {
 				container.scrollTop = container.scrollHeight;
 			});
 		},
-		registerBattle(){
+		registerBattle() {
 			// const userStore = usuariosStore();
-			let userObject = inject("userObject");
+			let userObject = {};
 			const storedUserObject = window.sessionStorage.getItem("userObject");
-			// console.log("storedUserObject: ", storedUserObject);	
+			// console.log("storedUserObject: ", storedUserObject);
 			userObject = JSON.parse(storedUserObject);
 			// console.log("UserObject: ", userObject);
 
 			const battle = battleStore();
-						
-			battle.userID = userObject.id;	
+
+			battle.userID = userObject.id;
 			battle.userPokemon = this.pokemonUsuario.id;
 			battle.enemyPokemon = this.pokemonEnemigo.id;
-        	battle.winner = this.winner;
+			battle.winner = this.winner;
 
 			// console.log("UserID :", userObject.id);
 			// console.log("userPokemon :", this.pokemonUsuario.id);
@@ -397,7 +398,7 @@ export default {
 			} catch (error) {
 				this.mensaje = error.message;
 			}
-		}
+		},
 	},
 };
 </script>
