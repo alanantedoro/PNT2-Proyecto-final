@@ -153,7 +153,7 @@
 	</div>
 </template>
 
-<!-------------------------------------------------------->
+<!------------------------SCRIPT-------------------------------->
 
 <script>
 import "../styles/type.css";
@@ -165,6 +165,8 @@ import {
 	obtEnemyPokemon,
 	relatedDamageMsg,
 } from "../functions/BattleFunctions.js";
+import { battleStore } from "../../stores/Battle.js";
+import { usuariosStore } from "../../stores/Users.js";
 
 export default {
 	data() {
@@ -186,10 +188,12 @@ export default {
 			userRecibeDmg: false,
 			enemyRecibeDmg: false,
 			inicio: true,
+			winner: null,
 		};
 	},
 
 	created: async function () {
+		// Aca en este fetch deberiamos pegarle a nuestra api trayendo la pokedex para hacer la seleccion.
 		const response = await fetch(`https://pokeapi.co/api/v2/pokemon/547`);
 		this.pokemonUsuario = await response.json();
 		this.pokemonEnemigo = await obtEnemyPokemon();
@@ -236,10 +240,14 @@ export default {
 			if (this.saludUsuario <= 0) {
 				this.jugando = false;
 				this.mensaje = "Derrota";
+				this.winner = false;
+				this.registerBattle();
 				this.$refs.battleSong.pause();
 			} else if (this.saludEnemigo <= 0) {
 				this.jugando = false;
 				this.mensaje = "Victoria";
+				this.winner = true;
+				this.registerBattle();
 				this.$refs.battleSong.pause();
 			}
 		},
@@ -338,6 +346,7 @@ export default {
 		rendirse() {
 			this.jugando = false;
 			this.mensaje = "Retirada";
+			// Pensar la logica en el caso de retirada
 		},
 		reinciar() {
 			location.reload();
@@ -354,6 +363,33 @@ export default {
 				container.scrollTop = container.scrollHeight;
 			});
 		},
+		registerBattle(){
+			const userStore = usuariosStore();
+			const battle = battleStore();
+						
+			battle.userID = userStore.userID;
+			battle.userPokemon = this.pokemonUsuario.id;
+			battle.enemyPokemon = this.pokemonEnemigo.id;
+        	battle.winner = this.winner;
+
+			console.log("UserID :", userStore.userID);
+			console.log("userPokemon :", this.pokemonUsuario.id);
+			console.log("enemyPokemon :", this.pokemonEnemigo.id);
+			console.log("winner :", this.winner);
+
+			console.log("Battle info: ", battle);
+			try {
+				const data = battle.register();
+
+				if (data) {
+					console.log("Partida terminada :", data);
+				} else {
+					throw new Error("La batalla no se registro");
+				}
+			} catch (error) {
+				this.mensaje = error.message;
+			}
+		}
 	},
 };
 </script>

@@ -116,6 +116,8 @@ async function obtEnemyPokemon() {
 	return pokeEnemy;
 }
 
+
+
 export {
 	calculateDebRes,
 	calculateDmg,

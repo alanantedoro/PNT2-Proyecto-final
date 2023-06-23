@@ -9,12 +9,10 @@ export const useLoginStatusStore = defineStore('loginStatus', {
         logIn() {
             this.isLoggedIn = true
             sessionStorage.setItem("loginCheck", this.isLoggedIn);
-            console.log("Login", this.isLoggedIn)
         },
         logOut() {
             this.isLoggedIn = false
             sessionStorage.setItem("loginCheck", this.isLoggedIn);
-            console.log("Logout", this.isLoggedIn)
         }
     }
 })

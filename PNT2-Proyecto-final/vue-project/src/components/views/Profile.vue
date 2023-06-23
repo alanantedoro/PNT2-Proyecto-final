@@ -40,9 +40,8 @@ export default {
 
 
 			try {
-				console.log(userID)
 				console.log(updatedFields)
-				const data = await userStore.update(userID, updatedFields);
+				const data = await userStore.update(updatedFields);
 				this.processData(data);
 			} catch (error) {
 				console.error(error);
