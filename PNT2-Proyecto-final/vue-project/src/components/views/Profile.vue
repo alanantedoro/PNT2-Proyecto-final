@@ -1,46 +1,61 @@
 <script>
-import { inject, onMounted } from "vue";
+import { ref, inject, onMounted } from "vue";
 import { usuariosStore } from "../../stores/Users.js";
+import { battleStore } from "../../stores/Battle";
 import { storeToRefs } from "pinia";
-
 
 export default {
 	data() {
 		return {
-			isReadOnly : true,
-		}
+			isReadOnly: true,
+		};
 	},
 	setup() {
 		const userObject = inject("userObject");
-		console.log(userObject)
-		onMounted(() => {
+		let battles = ref([]);
+		console.log(userObject);
+
+		const getBattles = async () => {
+			try {
+				const battles = battleStore();
+				const data = await battles.getByUserID(userObject.value.id);
+				return data;
+			} catch (error) {
+				console.error(error);
+			}
+		};
+
+		onMounted(async () => {
 			const storedUserObject = window.sessionStorage.getItem("userObject");
 			if (storedUserObject) {
 				userObject.value = JSON.parse(storedUserObject);
 			}
+			const battleReq = await getBattles();
+			battles.value = battleReq.battles;
+			console.log(battles);
 		});
 
 		return {
 			userObject,
+			battles,
 		};
 	},
 	methods: {
-		edit(){
-				this.$data.namePlaceholder = "Inserte su nuevo nombre de usuario";
-				this.$data.passwordPlaceholder = "Inserte su nueva password";
-				this.$data.isReadOnly = false
-			},
+		edit() {
+			this.$data.namePlaceholder = "Inserte su nuevo nombre de usuario";
+			this.$data.passwordPlaceholder = "Inserte su nueva password";
+			this.$data.isReadOnly = false;
+		},
 		async update() {
 			const userStore = usuariosStore();
-			const { userID } = storeToRefs(userStore)
+			const { userID } = storeToRefs(userStore);
 			const updatedFields = {
-				username : document.getElementById("newusername").value,
-				password : document.getElementById("newpassword").value,
-			  };
-
+				username: document.getElementById("newusername").value,
+				password: document.getElementById("newpassword").value,
+			};
 
 			try {
-				console.log(updatedFields)
+				console.log(updatedFields);
 				const data = await userStore.update(updatedFields);
 				this.processData(data);
 			} catch (error) {
@@ -56,69 +71,90 @@ export default {
 				this.mensaje = "Error en el update";
 			}
 		},
-	}
+	},
 };
 </script>
 
 <template>
 	<div class="back">
 		<div v-if="userObject">
-			<h2>Perfil</h2> <br>
+			<h2>Perfil</h2>
+			<br />
 			<h3>Presiona "Editar" para habilitar la edicion.</h3>
 			<label class="inputText">Nombre:</label>
-			<input class="inputText" type="text" :placeholder="userObject.username" :readonly="isReadOnly" id="newusername"> <br>
+			<input
+				class="inputText"
+				type="text"
+				:placeholder="userObject.username"
+				:readonly="isReadOnly"
+				id="newusername"
+			/>
+			<br />
 			<label class="inputText">Password:</label>
 			<!-- Por algun motivo no puedo traer la password, tema de hasheo?? -->
-			<input class="inputText" type="text" :placeholder="userObject.password" :readonly="isReadOnly" id="newpassword"> <br>
-			<button class="button-edit" v-on:click="edit" :hidden="!isReadOnly">Editar</button>
-			<button  class="button-edit" v-on:click="update" :hidden="isReadOnly">Confirmar </button>
+			<input
+				class="inputText"
+				type="text"
+				:placeholder="userObject.password"
+				:readonly="isReadOnly"
+				id="newpassword"
+			/>
+			<br />
+			<button class="button-edit" v-on:click="edit" :hidden="!isReadOnly">
+				Editar
+			</button>
+			<button class="button-edit" v-on:click="update" :hidden="isReadOnly">
+				Confirmar
+			</button>
+
+			<div class="historyTable">
+				<div v-for="battle in battles" :key="battle.id">
+					<h5 class="card-title">{{ battle }}</h5>
+				</div>
+			</div>
 		</div>
-	</div>
-	<div class="historyTable">
-		
 	</div>
 </template>
 <style scoped>
-
-.inputText{
+.inputText {
 	margin-left: 2%;
 	margin-top: 1%;
 }
 
 .button-edit {
-  background: #FF4742;
-  border: 1px solid #FF4742;
-  border-radius: 6px;
-  box-shadow: rgba(0, 0, 0, 0.1) 1px 2px 4px;
-  box-sizing: border-box;
-  color: #FFFFFF;
-  cursor: pointer;
-  display: inline-block;
-  font-family: nunito,roboto,proxima-nova,"proxima nova",sans-serif;
-  font-size: 16px;
-  font-weight: 800;
-  line-height: 16px;
-  min-height: 40px;
-  outline: 0;
-  padding: 12px 14px;
-  text-align: center;
-  text-rendering: geometricprecision;
-  text-transform: none;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-  vertical-align: middle;
-  margin: 2% 0 0 5%;
+	background: #ff4742;
+	border: 1px solid #ff4742;
+	border-radius: 6px;
+	box-shadow: rgba(0, 0, 0, 0.1) 1px 2px 4px;
+	box-sizing: border-box;
+	color: #ffffff;
+	cursor: pointer;
+	display: inline-block;
+	font-family: nunito, roboto, proxima-nova, "proxima nova", sans-serif;
+	font-size: 16px;
+	font-weight: 800;
+	line-height: 16px;
+	min-height: 40px;
+	outline: 0;
+	padding: 12px 14px;
+	text-align: center;
+	text-rendering: geometricprecision;
+	text-transform: none;
+	user-select: none;
+	-webkit-user-select: none;
+	touch-action: manipulation;
+	vertical-align: middle;
+	margin: 2% 0 0 5%;
 }
 
 .button-edit:hover,
 .button-edit:active {
-  background-color: initial;
-  background-position: 0 0;
-  color: #FF4742;
+	background-color: initial;
+	background-position: 0 0;
+	color: #ff4742;
 }
 
 .button-edit:active {
-  opacity: .5;
+	opacity: 0.5;
 }
 </style>
