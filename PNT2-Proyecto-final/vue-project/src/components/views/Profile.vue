@@ -74,6 +74,9 @@ export default {
 			<button  class="button-edit" v-on:click="update" :hidden="isReadOnly">Confirmar </button>
 		</div>
 	</div>
+	<div class="historyTable">
+		
+	</div>
 </template>
 <style scoped>
 

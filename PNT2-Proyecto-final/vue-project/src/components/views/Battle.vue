@@ -167,6 +167,8 @@ import {
 } from "../functions/BattleFunctions.js";
 import { battleStore } from "../../stores/Battle.js";
 import { usuariosStore } from "../../stores/Users.js";
+import { inject } from "vue";
+
 
 export default {
 	data() {
@@ -364,18 +366,24 @@ export default {
 			});
 		},
 		registerBattle(){
-			const userStore = usuariosStore();
+			// const userStore = usuariosStore();
+			let userObject = inject("userObject");
+			const storedUserObject = window.sessionStorage.getItem("userObject");
+			// console.log("storedUserObject: ", storedUserObject);	
+			userObject = JSON.parse(storedUserObject);
+			// console.log("UserObject: ", userObject);
+
 			const battle = battleStore();
 						
-			battle.userID = userStore.userID;
+			battle.userID = userObject.id;	
 			battle.userPokemon = this.pokemonUsuario.id;
 			battle.enemyPokemon = this.pokemonEnemigo.id;
         	battle.winner = this.winner;
 
-			console.log("UserID :", userStore.userID);
-			console.log("userPokemon :", this.pokemonUsuario.id);
-			console.log("enemyPokemon :", this.pokemonEnemigo.id);
-			console.log("winner :", this.winner);
+			// console.log("UserID :", userObject.id);
+			// console.log("userPokemon :", this.pokemonUsuario.id);
+			// console.log("enemyPokemon :", this.pokemonEnemigo.id);
+			// console.log("winner :", this.winner);
 
 			console.log("Battle info: ", battle);
 			try {
