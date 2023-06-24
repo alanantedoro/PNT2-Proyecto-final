@@ -168,6 +168,7 @@ import {
 import { battleStore } from "../../stores/Battle.js";
 import { usuariosStore } from "../../stores/Users.js";
 import { inject } from "vue";
+import { useRouter } from "vue-router";
 
 export default {
 	data() {
@@ -195,8 +196,11 @@ export default {
 
 	created: async function () {
 		const activePokemon = window.sessionStorage.getItem("activePokemon");
+		const router = useRouter();
+		console.log(!activePokemon);
 		if (!activePokemon) {
 			router.push("/SelectActivePokemon");
+			return;
 		}
 		const response = await fetch(
 			`https://pokeapi.co/api/v2/pokemon/${activePokemon}`
