@@ -20,6 +20,7 @@ import SelectFirstPokemon from "./components/views/SelectFirstPokemon.vue";
 import SelectActivePokemon from "./components/views/SelectActivePokemon.vue";
 import Error from "./components/views/Error.vue";
 
+
 import MonomaniacOneRegular from "@/fonts/MonomaniacOne-Regular.ttf";
 
 // Agrega esta línea para definir la fuente

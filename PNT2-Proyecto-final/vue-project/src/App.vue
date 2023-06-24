@@ -127,4 +127,12 @@ provide("userObject", userObject);
 .footer {
 	background-color: #2a27fa;
 }
+
+.navbar{
+	position: fixed; 
+	top: 0; 
+	left: 0; 
+	z-index: 9999; 
+	width: 100%;
+}
 </style>
