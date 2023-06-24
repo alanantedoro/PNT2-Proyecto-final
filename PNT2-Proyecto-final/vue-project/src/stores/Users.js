@@ -42,7 +42,7 @@ export const usuariosStore = defineStore("usuarios", {
 			const stateStore = useLoginStatusStore();
 			stateStore.logOut();
 			sessionStorage.setItem("userObject", null);
-			sessionStorage.setItem("activePokemon", null);
+			sessionStorage.setItem("activePokemon", -1);
 		},
 		buscar() {
 			const url = new URL("https://645ae5fd65bd868e93266759.mockapi.io/users");

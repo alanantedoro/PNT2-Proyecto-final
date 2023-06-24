@@ -141,6 +141,9 @@
 		</div>
 		<div v-else class="center-align">
 			<div v-if="inicio">
+				<button class="btn btn-primary"> 
+					<RouterLink to="/SelectActivePokemon" class="link-navbar">Elegir un Pokemon</RouterLink>
+				</button>
 				<a @click="empezar"><h1>START</h1></a>
 			</div>
 			<div v-else>
@@ -164,6 +167,7 @@ import {
 	obtMoves,
 	obtEnemyPokemon,
 	relatedDamageMsg,
+	checkPokedex,
 } from "../functions/BattleFunctions.js";
 import { battleStore } from "../../stores/Battle.js";
 import { usuariosStore } from "../../stores/Users.js";
@@ -197,8 +201,9 @@ export default {
 	created: async function () {
 		const activePokemon = window.sessionStorage.getItem("activePokemon");
 		const router = useRouter();
-		console.log(!activePokemon);
-		if (!activePokemon) {
+		console.log("Active Pokemon : ", activePokemon);
+
+		if (activePokemon < 0) {
 			router.push("/SelectActivePokemon");
 			return;
 		}
@@ -287,7 +292,9 @@ export default {
 					this.mensaje = "Victoria";
 					this.winner = true;
 					this.registerBattle();
-					this.actualizarPokedex();
+					if(!checkPokedex(this.pokemonEnemigo.id)){
+						this.actualizarPokedex();
+					}
 					//this.$refs.battleSong.pause();
 				}
 			}
@@ -387,7 +394,9 @@ export default {
 		rendirse() {
 			this.jugando = false;
 			this.mensaje = "Retirada";
-			// Pensar la logica en el caso de retirada
+
+			this.winner = false;
+			this.registerBattle();
 		},
 		reinciar() {
 			location.reload();
@@ -405,12 +414,9 @@ export default {
 			});
 		},
 		registerBattle() {
-			// const userStore = usuariosStore();
 			let userObject = {};
 			const storedUserObject = window.sessionStorage.getItem("userObject");
-			// console.log("storedUserObject: ", storedUserObject);
 			userObject = JSON.parse(storedUserObject);
-			// console.log("UserObject: ", userObject);
 
 			const battle = battleStore();
 
@@ -418,11 +424,6 @@ export default {
 			battle.userPokemon = this.pokemonUsuario.id;
 			battle.enemyPokemon = this.pokemonEnemigo.id;
 			battle.winner = this.winner;
-
-			// console.log("UserID :", userObject.id);
-			// console.log("userPokemon :", this.pokemonUsuario.id);
-			// console.log("enemyPokemon :", this.pokemonEnemigo.id);
-			// console.log("winner :", this.winner);
 
 			console.log("Battle info: ", battle);
 			try {
@@ -437,6 +438,7 @@ export default {
 				this.mensaje = error.message;
 			}
 		},
+
 	},
 };
 </script>

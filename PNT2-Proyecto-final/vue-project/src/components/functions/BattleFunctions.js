@@ -116,6 +116,30 @@ async function obtEnemyPokemon() {
 	return pokeEnemy;
 }
 
+function checkPokedex(id){
+	let tiene = false
+	const storedUserObject = window.sessionStorage.getItem("userObject");
+	let userObject = JSON.parse(storedUserObject);
+	let pokedex = userObject.pokedex.split(",")
+
+	const found = pokedex.find(element => element == id);
+
+	if(found){
+		tiene = true
+	}
+
+	// let i = 0
+	// while(!tiene && i < pokedex.length){
+
+	// 	if(pokedex[i] == id){
+	// 		tiene = true
+	// 	} else{
+	// 		i++
+	// 	}
+	// }
+
+	return tiene
+} 
 
 
 export {
@@ -126,4 +150,5 @@ export {
 	obtMoves,
 	obtEnemyPokemon,
 	relatedDamageMsg,
+	checkPokedex
 };

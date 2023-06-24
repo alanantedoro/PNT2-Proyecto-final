@@ -1,7 +1,6 @@
 @import './base.css';
 
 #app {
-  padding: 2rem;
   font-weight: normal;
 }
 
@@ -19,8 +18,7 @@ a,
 }
 
 @media (min-width: 1024px) {
-
   #app {
-    padding: 0 2rem;
+    padding: 0;
   }
 }

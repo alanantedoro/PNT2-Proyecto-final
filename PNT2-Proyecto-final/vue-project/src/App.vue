@@ -43,11 +43,11 @@ provide("userObject", userObject);
 					<li class="nav-item">
 						<RouterLink to="/Pokemons" class="link-navbar">Pokemons</RouterLink>
 					</li>
-					<li class="nav-item">
+					<!-- <li class="nav-item">
 						<RouterLink to="/SelectActivePokemon" class="link-navbar"
 							>poke activo</RouterLink
 						>
-					</li>
+					</li> -->
 					<li class="nav-item">
 						<RouterLink to="/Battle" class="link-navbar" v-if="userObject"
 							>Play</RouterLink

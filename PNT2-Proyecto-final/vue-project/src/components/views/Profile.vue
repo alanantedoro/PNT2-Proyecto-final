@@ -108,9 +108,25 @@ export default {
 			</button>
 
 			<div class="historyTable">
-				<div v-for="battle in battles" :key="battle.id">
-					<h5 class="card-title">{{ battle }}</h5>
-				</div>
+				<h2 id="historyTitle"> Historial de partidas: </h2>
+				<table class="table">
+  					<thead>
+   					<tr>
+      					<th scope="col">#</th>
+      					<th scope="col">Pokemon</th>
+      					<th scope="col">Enemigo</th>
+      					<th scope="col">Resultado</th>
+    				</tr>
+  					</thead>
+ 				<tbody>
+    				<tr v-for="battle in battles" :key="battle.id">
+      					<th scope="row">{{ battle.id }}</th>
+      					<td> {{ battle.userPokemon }}</td>
+      					<td> {{ battle.enemyPokemon }}</td>
+      					<td> {{ battle.winner == 1 ? 'Ganada' : 'Perdida' }}</td>
+    				</tr>
+  				</tbody>
+			</table>
 			</div>
 		</div>
 	</div>
@@ -156,5 +172,9 @@ export default {
 
 .button-edit:active {
 	opacity: 0.5;
+}
+
+#historyTitle{
+	margin: 2% 0 0 1%;
 }
 </style>
