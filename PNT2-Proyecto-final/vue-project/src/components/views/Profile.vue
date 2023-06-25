@@ -19,11 +19,36 @@ export default {
 			try {
 				const battles = battleStore();
 				const data = await battles.getByUserID(userObject.value.id);
+				// console.log("data > ",data);
+				getPokeSprites(data);
 				return data;
 			} catch (error) {
 				console.error(error);
 			}
+			
 		};
+
+
+		let enemyPokemons = [];
+		let myPokemons = [];
+
+		async function getPokeSprites(data){
+			const battles = data.battles
+			console.log("battles >>", battles)	
+			console.log("ids >>", battles.enemyPokemon);
+			for (const id of battles) {
+				console.log("POKE ID>>>>", id.enemyPokemon);
+			const enemyResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${id.enemyPokemon}`);
+			const myResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${id.userPokemon}`);
+			enemyPokemons.push(await enemyResponse.json());
+			myPokemons.push(await myResponse.json());
+			}
+
+
+			return enemyPokemons;
+		}
+
+
 
 		onMounted(async () => {
 			const storedUserObject = window.sessionStorage.getItem("userObject");
@@ -34,10 +59,12 @@ export default {
 			battles.value = battleReq.battles;
 			console.log(battles);
 		});
-
+		
 		return {
 			userObject,
 			battles,
+			enemyPokemons,
+			myPokemons
 		};
 	},
 	methods: {
@@ -73,6 +100,8 @@ export default {
 		},
 	},
 };
+
+
 </script>
 
 <template>
@@ -91,7 +120,6 @@ export default {
 			/>
 			<br />
 			<label class="inputText">Password:</label>
-			<!-- Por algun motivo no puedo traer la password, tema de hasheo?? -->
 			<input
 				class="inputText"
 				type="text"
@@ -119,10 +147,10 @@ export default {
     				</tr>
   					</thead>
  				<tbody>
-    				<tr v-for="battle in battles" :key="battle.id">
+    				<tr v-for="(battle, index) in battles" :key="battle.id">
       					<th scope="row">{{ battle.id }}</th>
-      					<td> {{ battle.userPokemon }}</td>
-      					<td> {{ battle.enemyPokemon }}</td>
+      					<td> <img :src="myPokemons[index]?.sprites?.front_default"></td>
+      					<td> <img  :src="enemyPokemons[index]?.sprites?.front_default"> </td>
       					<td> {{ battle.winner == 1 ? 'Ganada' : 'Perdida' }}</td>
     				</tr>
   				</tbody>
