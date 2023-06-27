@@ -89,4 +89,7 @@ export default {
 .card-title {
 	color: black;
 }
+.back {
+	padding-top: 4.5rem;
+}
 </style>

@@ -1,6 +1,6 @@
 <script setup></script>
 <template>
-	<div style="background-color: #99c0e1">
+	<div class="back" style="background-color: #99c0e1">
 		<div class="contenedora-terms">
 			<div class="column-terms">
 				<h1>Terms and Conditions</h1>
@@ -91,6 +91,9 @@
 	</div>
 </template>
 <style scoped>
+.back {
+	padding-top: 4.5rem;
+}
 .contenedora-terms {
 	display: flex;
 }

@@ -60,6 +60,9 @@ export default {
 	</div>
 </template>
 <style scoped>
+.back {
+	padding-top: 4.5rem;
+}
 .pokemon-card {
 	text-align: center;
 	width: 10rem;

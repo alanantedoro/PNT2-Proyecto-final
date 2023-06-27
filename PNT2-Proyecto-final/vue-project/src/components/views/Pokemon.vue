@@ -101,6 +101,7 @@ export default {
 	display: flex;
 	justify-content: center; /* Centra horizontalmente en la pantalla */
 	align-items: center; /* Centra verticalmente en la pantalla */
+	padding-top: 4.5rem;
 }
 
 .container {
