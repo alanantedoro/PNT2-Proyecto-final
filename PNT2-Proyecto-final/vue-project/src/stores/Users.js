@@ -9,6 +9,32 @@ export const usuariosStore = defineStore("usuarios", {
 		password: "",
 	}),
 	actions: {
+		async inPokedex(id, pokeId) {
+			const stateStore = useLoginStatusStore();
+
+			let headers = new Headers();
+			headers.append("Content-Type", "application/json");
+			headers.append("Accept", "application/json");
+
+			headers.append("Access-Control-Allow-Origin", "http://localhost:5173");
+			headers.append("Access-Control-Allow-Credentials", "true");
+
+			headers.append("GET", "POST", "OPTIONS");
+			return axios
+				.post(`http://localhost:8080/users/inPokedex/${id}`, {
+					credentials: "include",
+					method: "POST",
+					headers: headers,
+					pokemonId: pokeId,
+				})
+				.then((response) => {
+					stateStore.logIn();
+					return response.data;
+				})
+				.catch((error) => {
+					return error.response.data.message;
+				});
+		},
 		async login() {
 			const stateStore = useLoginStatusStore();
 

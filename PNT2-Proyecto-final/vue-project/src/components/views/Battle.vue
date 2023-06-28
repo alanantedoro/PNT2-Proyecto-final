@@ -140,11 +140,14 @@
 			</div>
 		</div>
 		<div v-else class="center-align">
-			<div v-if="inicio">
-				<button class="btn btn-primary"> 
-					<RouterLink to="/SelectActivePokemon" class="link-navbar">Elegir un Pokemon</RouterLink>
-				</button>
-				<a @click="empezar"><h1>START</h1></a>
+			<div v-if="inicio" class="inicio">
+				<RouterLink to="/SelectActivePokemon" class="link-navbar"
+					><h1 style="color: aliceblue !important">
+						Elegir un Pokemon
+					</h1></RouterLink
+				>
+
+				<a @click="empezar"><h1 class="text-link">START</h1></a>
 			</div>
 			<div v-else>
 				<a href="#" class="yellow-text mensaje-final" @click="reinciar">
@@ -203,7 +206,19 @@ export default {
 		const router = useRouter();
 		console.log("Active Pokemon : ", activePokemon);
 
-		if (activePokemon < 0) {
+		if (activePokemon <= 0) {
+			router.push("/SelectActivePokemon");
+			return;
+		}
+		const userStore = usuariosStore();
+		const storedUserObject = window.sessionStorage.getItem("userObject");
+		let userID = 0;
+		if (storedUserObject) {
+			const userObject = JSON.parse(storedUserObject);
+			userID = userObject.id;
+		}
+		const inPokedex = await userStore.inPokedex(userID, activePokemon);
+		if (inPokedex == null || !inPokedex.ok) {
 			router.push("/SelectActivePokemon");
 			return;
 		}
@@ -292,7 +307,7 @@ export default {
 					this.mensaje = "Victoria";
 					this.winner = true;
 					this.registerBattle();
-					if(!checkPokedex(this.pokemonEnemigo.id)){
+					if (!checkPokedex(this.pokemonEnemigo.id)) {
 						this.actualizarPokedex();
 					}
 					//this.$refs.battleSong.pause();
@@ -410,7 +425,9 @@ export default {
 		scrollToBottom() {
 			this.$nextTick(() => {
 				const container = document.querySelector(".moves-history");
-				container.scrollTop = container.scrollHeight;
+				if (container != null) {
+					container.scrollTop = container.scrollHeight;
+				}
 			});
 		},
 		registerBattle() {
@@ -438,12 +455,21 @@ export default {
 				this.mensaje = error.message;
 			}
 		},
-
 	},
 };
 </script>
 
 <style scoped>
+.text-link:hover {
+	cursor: pointer !important;
+}
+.inicio {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	color: aliceblue !important;
+}
 .card-content {
 	padding-bottom: 15px;
 }
@@ -463,6 +489,8 @@ export default {
 	flex-direction: row;
 	justify-content: space-around;
 	align-items: center;
+	padding-top: 4.5rem;
+	padding-bottom: 2rem;
 }
 
 .barra-ataques {
