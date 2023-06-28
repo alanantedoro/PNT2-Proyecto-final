@@ -1,7 +1,4 @@
 <script>
-import { usuariosStore } from "../../stores/Users.js";
-import { inject } from "vue";
-
 export default {
 	data() {
 		return {
@@ -39,14 +36,18 @@ export default {
 			<h1>Pokemons</h1>
 		</div>
 		<div class="card-group">
-			<div v-for="(item, index) in pokemons">
+			<div v-for="(pokemon, index) in pokemons">
 				<div class="card pokemon-card">
-					<router-link :to="'/Battle'" @click="seleccionarPokemon(item.id)">
+					<router-link :to="'/Battle'" @click="seleccionarPokemon(pokemon.id)">
 						<div class="card-body">
-							<h6 class="card-title">#{{ item.id }}</h6>
-							<h5 class="card-title">{{ item.name }}</h5>
+							<h6 class="card-title">#{{ pokemon.id }}</h6>
+							<h5 class="card-title">
+								{{
+									pokemon.name?.charAt(0).toUpperCase() + pokemon.name?.slice(1)
+								}}
+							</h5>
 							<img
-								:src="item.sprites.front_default"
+								:src="pokemon.sprites.front_default"
 								class="card-img-top"
 								alt="Pokemon Image"
 								loading="lazy"
